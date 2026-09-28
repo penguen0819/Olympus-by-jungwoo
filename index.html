@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>올림포스 지문 암기장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Noto+Serif+KR:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F5F1E7;
+    --card: #FFFDF8;
+    --line: #DCD3BE;
+    --ink: #1F2A3C;
+    --ink-soft: #5B6472;
+    --brick: #9A3324;
+    --brick-soft: #C15A3F;
+    --pine: #2F6F62;
+    --pine-soft: #E4EFEC;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans KR', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{ display:flex; min-height:100vh; }
+
+  /* ---- 좌측 목차 탭 ---- */
+  .rail{
+    width:230px; flex-shrink:0;
+    background:var(--card);
+    border-right:1px solid var(--line);
+    padding:28px 0;
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .rail-title{ font-family:'Source Serif 4', serif; font-weight:700; font-size:19px; padding:0 20px 6px; }
+  .rail-sub{ font-size:12px; color:var(--ink-soft); padding:0 20px 18px; border-bottom:1px solid var(--line); margin-bottom:6px; }
+  .chapter-label{
+    font-size:11px; font-weight:700; letter-spacing:.03em; color:var(--ink-soft);
+    padding:14px 20px 4px; text-transform:uppercase;
+  }
+  .unit-tab{
+    display:block; width:100%; text-align:left; background:none; border:none;
+    border-left:3px solid transparent; padding:12px 20px;
+    font-family:'Noto Sans KR', sans-serif; font-size:14.5px; font-weight:500;
+    color:var(--ink-soft); cursor:pointer;
+  }
+  .unit-tab .num{ display:inline-block; font-family:'Source Serif 4', serif; font-weight:600; font-size:12px; color:var(--ink-soft); margin-right:8px; }
+  .unit-tab.active{ background:var(--pine-soft); border-left-color:var(--pine); color:var(--pine); }
+  .unit-tab.active .num{ color:var(--pine); }
+  .unit-tab:hover:not(.active){ background:#F0EADA; }
+  .rail-progress{ padding:20px 20px 0; font-size:12px; color:var(--ink-soft); line-height:1.6; }
+
+  /* ---- 메인 ---- */
+  .main{ flex:1; min-width:0; padding:36px 44px 80px; max-width:860px; }
+  .unit-header{ margin-bottom:26px; }
+  .unit-header .eyebrow{ font-size:12.5px; color:var(--brick); font-weight:600; margin-bottom:4px; }
+  .unit-header h1{ font-family:'Source Serif 4', serif; font-size:28px; font-weight:700; margin:0 0 6px; }
+  .unit-header p{ margin:0; font-size:13.5px; color:var(--ink-soft); }
+
+  .passage-chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px; }
+  .chip{
+    border:1px solid var(--line); background:var(--card); padding:8px 14px; border-radius:3px;
+    font-size:13px; font-weight:500; color:var(--ink-soft); cursor:pointer; font-family:'Noto Sans KR', sans-serif;
+  }
+  .chip.active{ border-color:var(--brick); color:var(--brick); background:#FBEFEA; }
+
+  .passage{ background:var(--card); border:1px solid var(--line); border-radius:4px; padding:6px 0 10px; }
+  .passage-title{ display:flex; align-items:baseline; gap:10px; padding:20px 28px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .passage-title h2{ font-family:'Source Serif 4', serif; font-size:20px; font-weight:600; margin:0; }
+  .passage-title .kor{ font-family:'Noto Serif KR', serif; font-size:13px; color:var(--ink-soft); }
+
+  .passage-toolbar{ display:flex; justify-content:space-between; gap:8px; padding:12px 28px 0; flex-wrap:wrap; }
+  .toolbar-right{ display:flex; gap:8px; }
+  .toolbar-btn{
+    font-family:'Noto Sans KR', sans-serif; font-size:12px; color:var(--pine); background:none;
+    border:1px solid var(--pine); border-radius:20px; padding:5px 13px; cursor:pointer;
+  }
+  .toolbar-btn:hover{ background:var(--pine-soft); }
+  .toolbar-btn.flow-btn{ color:var(--brick); border-color:var(--brick); }
+  .toolbar-btn.flow-btn:hover{ background:#FBEFEA; }
+
+  .flow-box{ display:none; margin:14px 28px 0; padding:14px 18px; background:var(--pine-soft); border:1px solid var(--pine); border-radius:4px; }
+  .flow-box.show{ display:block; }
+  .flow-box ol{ margin:0; padding-left:19px; }
+  .flow-box li{ font-family:'Noto Serif KR', serif; font-size:13.5px; color:var(--ink); line-height:1.7; margin-bottom:5px; }
+  .flow-box li:last-child{ margin-bottom:0; }
+  .flow-empty{ font-family:'Noto Serif KR', serif; font-size:13px; color:var(--ink-soft); }
+
+  .quiz-section{ margin:22px 28px 4px; padding:16px 18px; border:1px dashed var(--brick-soft); border-radius:4px; background:#FFFCF6; }
+  .quiz-header{ font-family:'Source Serif 4', serif; font-weight:600; font-size:14px; color:var(--brick); margin-bottom:10px; }
+  .quiz-types{ display:flex; flex-wrap:wrap; gap:8px; }
+  .quiz-type-btn{ font-family:'Noto Sans KR', sans-serif; font-size:12.5px; color:var(--brick); background:#FBEFEA; border:1px solid var(--brick-soft); border-radius:16px; padding:6px 12px; cursor:pointer; }
+  .quiz-type-btn:hover:not(:disabled){ background:#F6DCD1; }
+  .quiz-type-btn:disabled{ opacity:.5; cursor:default; }
+  .quiz-result{ margin-top:12px; }
+  .quiz-loading, .quiz-empty{ font-family:'Noto Serif KR', serif; font-size:13px; color:var(--ink-soft); padding:6px 2px; }
+  .quiz-instruction{ font-family:'Noto Serif KR', serif; font-size:14px; font-weight:600; color:var(--ink); margin-bottom:8px; }
+  .quiz-passage{ font-family:'Source Serif 4', serif; font-size:14.5px; line-height:1.7; color:var(--ink); white-space:pre-wrap; background:var(--card); border:1px solid var(--line); border-radius:4px; padding:12px 14px; margin-bottom:12px; }
+  .quiz-options{ display:flex; flex-direction:column; gap:8px; }
+  .quiz-option{ text-align:left; font-family:'Noto Sans KR', sans-serif; font-size:13.5px; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:4px; padding:9px 12px; cursor:pointer; white-space:pre-wrap; }
+  .quiz-option:hover:not(:disabled){ background:#F0EADA; }
+  .quiz-option:disabled{ cursor:default; }
+  .quiz-option.correct{ border-color:var(--pine); background:var(--pine-soft); color:var(--pine); font-weight:600; }
+  .quiz-option.wrong{ border-color:var(--brick); background:#FBEFEA; color:var(--brick); }
+  .quiz-explanation{ margin-top:12px; font-family:'Noto Serif KR', serif; font-size:13px; color:var(--ink-soft); line-height:1.6; padding-top:10px; border-top:1px dashed var(--line); }
+  .quiz-explanation strong{ color:var(--brick); }
+
+  .sentence-list{ padding:14px 28px 10px; }
+  .sentence{ padding:16px 0; border-bottom:1px dashed var(--line); }
+  .sentence:last-child{ border-bottom:none; }
+  .sentence-index{ font-family:'Source Serif 4', serif; font-size:12px; color:var(--brick-soft); margin-bottom:6px; }
+  .en{ font-family:'Source Serif 4', serif; font-size:16.5px; line-height:1.6; color:var(--ink); margin-bottom:10px; }
+  .en.strike{ text-decoration:line-through; color:var(--ink-soft); }
+  .note-tag{
+    display:inline-block; font-family:'Noto Sans KR', sans-serif; font-size:11px;
+    color:var(--brick); border:1px solid var(--brick); border-radius:10px; padding:1px 8px; margin-left:8px; vertical-align:middle;
+  }
+
+  /* ---- 구절 단위 가림막 ---- */
+  .ko-row{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 0; line-height:2.05; }
+  .phrase{ position:relative; display:inline-block; margin:2px 5px 2px 0; vertical-align:middle; }
+  .ko-text{
+    font-family:'Noto Serif KR', serif; font-size:14.5px; color:var(--ink-soft);
+    visibility:hidden; white-space:pre; padding:2px 3px;
+  }
+  .cover{
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(135deg, #EDE6D4, #EDE6D4 6px, #E2D8C0 6px, #E2D8C0 12px);
+    border:1px solid var(--line); border-radius:3px; cursor:pointer;
+  }
+  .cover:hover{ background:repeating-linear-gradient(135deg, #E5DCC5, #E5DCC5 6px, #D9CCAC 6px, #D9CCAC 12px); }
+  .phrase.revealed .ko-text{ visibility:visible; }
+  .phrase.revealed .cover{ display:none; }
+  .phrase:not(.revealed) .ko-text{ cursor:default; }
+  .phrase.revealed .ko-text{ cursor:pointer; }
+
+  .footnote{ padding:14px 28px 22px; font-size:12px; color:var(--ink-soft); font-family:'Noto Serif KR', serif; border-top:1px solid var(--line); margin-top:4px; }
+  .footnote .hint{ color:var(--pine); }
+
+  .table-wrap{ padding:16px 28px 0; overflow-x:auto; }
+  table.ref-table{ border-collapse:collapse; width:100%; font-size:13px; font-family:'Noto Sans KR', sans-serif; }
+  table.ref-table th, table.ref-table td{ border:1px solid var(--line); padding:7px 10px; text-align:center; }
+  table.ref-table th{ background:#F0EADA; color:var(--ink); font-weight:600; }
+  .table-caption{ font-size:12px; color:var(--ink-soft); padding:10px 28px 0; font-family:'Noto Serif KR', serif; }
+
+  @media (max-width: 780px){
+    .app{ flex-direction:column; }
+    .rail{ width:100%; height:auto; position:relative; padding:14px 0; }
+    .rail-title, .rail-sub, .rail-progress, .chapter-label{ padding-left:16px; padding-right:16px; }
+    .unit-tab{ display:inline-block; width:auto; padding:9px 14px; }
+    .main{ padding:24px 16px 60px; max-width:100%; }
+    .passage-title, .sentence-list, .footnote, .table-wrap, .table-caption{ padding-left:18px; padding-right:18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <nav class="rail" id="rail">
+    <div class="rail-title">올림포스 암기장</div>
+    <div class="rail-sub">영어독해의 기본 2</div>
+    <div id="unitTabs"></div>
+    <div class="rail-progress" id="progressBox"></div>
+  </nav>
+
+  <main class="main">
+    <div class="unit-header">
+      <div class="eyebrow" id="unitEyebrow"></div>
+      <h1 id="unitTitle"></h1>
+      <p id="unitDesc"></p>
+    </div>
+
+    <div class="passage-chips" id="passageChips"></div>
+
+    <section class="passage" id="passageView"></section>
+  </main>
+</div>
+
+<script>
+// ko는 문장이 아니라 "구절" 단위로 쪼갠 배열입니다. 각 구절마다 개별 가림막이 씌워집니다.
+const DATA = {
+  u1: {
+    chapter: 1, label: "UNIT 01",
+    title: "대의 파악 · 목적 추론",
+    desc: "글을 읽고 글쓴이가 전하려는 목적과 의도를 파악하는 지문 4개",
+    passages: [
+      {
+        en_title: "To Move to a New Location",
+        ko_title: "가게 이전 안내",
+        sentences: [
+          { en: "With our lease coming to an end, we've finally made the decision.",
+            ko: ["저희의 임대 계약이 종료됨에 따라,", "저희는 마침내 결정을 내렸습니다."] },
+          { en: "While we've loved our time on 125th Street, our business has changed a lot in the last few years and we realized we wanted a location with more baking space that would better serve the community we live in.",
+            ko: ["125번가에서의 시간도 좋았지만,", "지난 몇 년 동안 저희의 사업은 많이 변했고,", "저희는 저희가 살고 있는 지역 사회에 더 나은 서비스를 제공할", "더 넓은 제빵 공간을 갖춘 장소를 원한다는 것을 깨달았습니다."] },
+          { en: "We're so excited to announce we'll be moving to a new spot on 50th Street.",
+            ko: ["저희가 50번가의 새로운 장소로 이전할 것이라는 소식을 알리게 되어", "매우 기쁩니다."] },
+          { en: "We will continue to offer the same delicious cookies and coffee at our new location.",
+            ko: ["새로운 장소에서도", "변함없이 맛있는 쿠키와 커피를", "계속해서 제공할 것입니다."] },
+          { en: "While it feels scary to move away from our current location, we're confident that this move will allow us to enhance our service to you.",
+            ko: ["지금의 장소에서 옮겨가는 것이 두렵게 느껴지기도 하지만,", "이번 이전으로 저희가 여러분께", "더 나은 서비스를 제공할 수 있게 될 것이라 확신합니다."] },
+          { en: "Thank you for your continued support, and we look forward to welcoming you to our new home!",
+            ko: ["여러분의 지속적인 성원에 감사드리며,", "새로운 보금자리에서 여러분을 맞이할 수 있기를 고대합니다!"] }
+        ]
+      },
+      {
+        en_title: "Apology for Violating the Rights of Works",
+        ko_title: "음악 저작권 침해에 대한 사과",
+        sentences: [
+          { en: "Recently, we at Silver Lining Studio discovered that two songs in our \"Behind the Frame\" game soundtrack might have been used without permission from their creators, thus violating the rights of others' works.",
+            ko: ["최근,", "저희 Silver Lining Studio는", "\"Behind the Frame\" 게임 사운드트랙의 두 곡이", "원작자의 허락 없이 사용되어", "타인의 저작물에 대한 권리를 침해했을 수도 있다는 것을 발견했습니다."] },
+          { en: "We extend our deepest apologies for this matter and sincerely regret any harm or disappointment this may have caused to the original composers and all of you who play our game.",
+            ko: ["이 문제에 대해 깊은 사과의 뜻을 표하며,", "이로 인해 원 작곡가와 저희 게임을 하는 모든 분께", "야기되었을 수도 있는 손해와 실망에 대해", "진심으로 유감스럽게 생각합니다."] },
+          { en: "We understand the importance of respecting intellectual property rights and taking immediate steps to address this issue.",
+            ko: ["저희는 지식 재산권을 존중하고", "이 문제를 해결하기 위해 즉각적인 조치를 하는 것의", "중요성을 알고 있습니다."] },
+          { en: "The songs have been promptly removed from the game and related videos, and we promise to make sure this doesn't happen again.",
+            ko: ["그 곡들은 게임 및 관련 영상에서 신속하게 삭제되었으며,", "다시는 이런 일이 발생하지 않도록", "확실히 할 것을 약속드립니다."] },
+          { en: "Once again, we extend our sincerest apologies for this matter.",
+            ko: ["다시 한번 이 문제에 대해", "진심 어린 사과의 뜻을 표합니다."] },
+          { en: "Thank you for your patience and continued support.",
+            ko: ["기다려 주시고", "계속 성원해 주셔서 감사합니다."] }
+        ]
+      },
+      {
+        en_title: "Notification of App Free Trial Expiration",
+        ko_title: "앱 무료 체험 기간 만료 알림",
+        sentences: [
+          { en: "We trust this message finds you in good spirits!",
+            ko: ["저희는 이 메시지가", "귀하에게 좋은 기분으로 전해지리라 믿습니다!"] },
+          { en: "We want to express our heartfelt gratitude for choosing the JoyfulPiano app and for starting this musical journey with us.",
+            ko: ["JoyfulPiano 앱을 선택해 주시고", "저희와 함께 이 음악 여행을 시작해 주신 것에", "진심 어린 감사를 전하고 싶습니다."] },
+          { en: "As your free trial period draws to a close, we want to ensure you have all the necessary details before it concludes.",
+            ko: ["귀하의 무료 체험 기간이 끝나 감에 따라,", "그것이 종료되기 전에", "귀하가 필요한 모든 세부 사항을 아시도록", "확실히 하고자 합니다."] },
+          { en: "Your free access to JoyfulPiano will expire in just five days.",
+            ko: ["귀하의 JoyfulPiano의 무료 이용이", "불과 5일 후에 만료될 것입니다."] },
+          { en: "Following this, access to our app will be limited unless you choose to subscribe to one of our premium plans.",
+            ko: ["이후에는,", "귀하께서 당사의 프리미엄 요금제 중 하나에 가입하지 않으면", "앱 이용이 제한될 것입니다."] },
+          { en: "We sincerely hope you've enjoyed exploring its features during your trial period.",
+            ko: ["체험 기간 동안에", "귀하께서 앱의 특징적 기능들을 탐색하는 것을", "즐기셨기를 진심으로 바랍니다."] },
+          { en: "Should you have any questions or require further assistance, please don't hesitate to reach out to us at www.joyfulpianoapp.com.",
+            ko: ["궁금한 점이 있거나 추가적인 도움이 필요하시면,", "주저하지 마시고", "www.joyfulpianoapp.com으로 저희에게 연락해 주시기 바랍니다."] },
+          { en: "We're here to support you every step of the way.",
+            ko: ["저희는 모든 과정을 지원하기 위해", "준비하고 있습니다."] },
+          { en: "Thank you once again for choosing JoyfulPiano.",
+            ko: ["JoyfulPiano를 선택해 주셔서", "다시 한번 감사드립니다."] }
+        ]
+      },
+      {
+        en_title: "Color Difference of Products",
+        ko_title: "제품 색상 오류",
+        sentences: [
+          { en: "We at May Summer Online Clothing Store thank you for choosing our new fall sweater.",
+            ko: ["저희의 신상품 가을 스웨터를 선택해 주셔서", "우리 May Summer 온라인 의류점은 감사드립니다."] },
+          { en: "We are truly grateful for your purchase and overwhelmed by the popularity of our latest collection.",
+            ko: ["저희는 귀하의 구매에 진심으로 감사드리며,", "최신 컬렉션의 인기에 압도되고 있습니다."] },
+          { en: "However, we also deeply regret any disappointment you may feel due to the color difference between the clothes displayed on our website (dark red) and the actual product (bright scarlet).",
+            ko: ["그러나 저희는 또한", "웹사이트에 게시된 옷(어두운 빨간색)과 실제 제품(밝은 주황색) 사이의 색상 차이로 인해", "귀하가 느꼈을 어떤 실망감도", "매우 유감스럽게 생각하고 있습니다."] },
+          { en: "We understand the disappointment this may have caused upon delivery.",
+            ko: ["배송 시 이로 인해 생겼을 수도 있는 실망감을", "저희는 이해합니다."] },
+          { en: "Your satisfaction is our priority, and we are committed to making things right.",
+            ko: ["고객님의 만족이 저희의 최우선 사항이며", "저희는 문제를 바로잡는 것에 전념하고 있습니다."] },
+          { en: "Please provide your address and preferred pick-up date on our website, and we will promptly arrange for the return of the item and process your refund accordingly.",
+            ko: ["저희 웹사이트에 귀하의 주소와 원하는 수거 날짜를 알려 주시면", "신속하게 그 물품의 반송을 처리하고,", "그에 따라 환불을 처리해 드리겠습니다."] },
+          { en: "We sincerely apologize for any inconvenience this has caused and assure you that we are taking steps to ensure accurate representation of our products in the future.",
+            ko: ["이 일이 초래한 불편에 진심으로 사과드리며,", "향후 정확한 제품 표시를 확실히 하기 위해", "저희가 조치하고 있음을 보장해 드립니다."] }
+        ]
+      }
+    ]
+  },
+  u2: {
+    chapter: 1, label: "UNIT 02",
+    title: "대의 파악 · 심경 변화",
+    desc: "이야기 속 인물의 심경 변화와 분위기를 추론하는 지문 4개",
+    passages: [
+      {
+        en_title: "Cold Absence and the Kindness of a Colleague",
+        ko_title: "감기로 인한 결근과 직장 동료의 친절",
+        sentences: [
+          { en: "Fiona woke up with the worst cough, a sore throat, and a headache.",
+            ko: ["Fiona는 최악의 기침과 인후통, 두통과 함께", "잠에서 깼다."] },
+          { en: "She had to take time off from work, but she knew that taking off today would mean facing a ton of paperwork on her desk tomorrow.",
+            ko: ["그녀는 직장을 쉬어야 했지만,", "오늘 쉬는 것은", "내일 책상 위의 수많은 서류와 마주한다는 것을 의미한다는 걸 알고 있었다."] },
+          { en: "Just thinking about it made her headache even worse.",
+            ko: ["그것에 대해 생각하는 것만으로도", "그녀의 두통이 훨씬 더 심해졌다."] },
+          { en: "Then the doorbell rang. It was Chandra, her colleague.",
+            ko: ["그때 초인종이 울렸다.", "그녀의 직장 동료인 Chandra였다."] },
+          { en: "\"No worries, Fiona. I took care of the phone calls and messages, and I even told everyone to think twice before putting any paper on your desk,\" Chandra said.",
+            ko: ["\"걱정하지 마, Fiona.", "내가 전화와 메시지를 처리했고,", "모두에게 너의 책상 위에 서류를 올려놓기 전에", "다시 한번 생각하라고 말하기까지 했어.\"", "Chandra가 말했다."] },
+          { en: "Surprised, Fiona stared blankly at Chandra.",
+            ko: ["놀라서", "Fiona는 멍하니 Chandra를 쳐다보았다."] },
+          { en: "\"Here's some chicken noodle soup,\" Chandra said as she passed Fiona the brown bag she was carrying. \"And I bought throat spray and cough drops for you.\"",
+            ko: ["\"여기 닭고기 국수 수프를 가져왔어.\"", "Chandra가 들고 있던 갈색 봉투를 Fiona에게 건네며 말했다.", "\"그리고 너를 위해 인후 스프레이와 기침약도 사 왔어.\""] },
+          { en: "Fiona wanted to say thanks, but her sore throat held her back.",
+            ko: ["Fiona는 고맙다는 말을 하고 싶었지만,", "목이 아파서 할 수 없었다."] },
+          { en: "However, Chandra knew exactly what she wanted to say. \"No problem, Fiona. I've got your back.\"",
+            ko: ["하지만 Chandra는 그녀가 하고 싶은 말이 무엇인지 정확히 알고 있었다.", "\"괜찮아, Fiona. 내가 도와줄게.\""] }
+        ]
+      },
+      {
+        en_title: "My Puppy and My Father",
+        ko_title: "강아지와 아버지",
+        sentences: [
+          { en: "When I saw Mr. Grear talking to my father in front of our house, my heart sank.",
+            ko: ["나는 Grear 씨가 우리 집 앞에서 아버지와 이야기하는 것을 보고", "내 심장이 철렁 내려앉았다."] },
+          { en: "\"He must be here for one of the puppies!\"",
+            ko: ["\"그는 강아지 중 한 마리 때문에", "여기 온 게 분명해!\""] },
+          { en: "My family lived in a very small town, and my best and only friends were our dog, Blackie, and her two newborn puppies.",
+            ko: ["우리 가족은 아주 작은 마을에 살고 있었고,", "나의 가장 친한, 유일한 친구는", "우리 집 개 Blackie와 그녀의 갓 태어난 강아지 두 마리뿐이었다."] },
+          { en: "My father had mentioned that we couldn't afford to keep them all and should find them new homes.",
+            ko: ["아버지는 이들을 모두 키울 형편이 안 되니", "새집을 찾아 줘야 한다고 언급했었다."] },
+          { en: "I dashed toward the house to stop my father, but I overheard him saying, \"You don't quite catch my meaning, Mr. Grear. I'm not asking for a higher price for this puppy.\"",
+            ko: ["나는 아버지를 말리려고 집으로 달려갔지만,", "아버지가 \"제 뜻을 잘 이해하지 못하셨군요, Grear 씨.", "저는 이 강아지에게 더 높은 가격을 요구하는 게 아닙니다.\"라고", "말하는 것을 우연히 들었다."] },
+          { en: "Mr. Grear frowned in perplexity.",
+            ko: ["Grear 씨는 당혹감에", "얼굴을 찌푸렸다."] },
+          { en: "My father continued, \"I'm saying there isn't any price on him because he belongs to my son. We are keeping both of them.\"",
+            ko: ["아버지는 말을 이어 나갔다.", "\"저는 이 강아지가 제 아들의 것이기 때문에", "그것에 가격을 붙일 수 없다고 말하고 있는 겁니다.", "우리 가족은 두 마리 모두 키울 겁니다.\""] },
+          { en: "I just stood there and I tried to understand what he said.",
+            ko: ["나는 그냥 거기 서서", "아버지가 말한 것을 이해하려고 노력했다."] },
+          { en: "When my eyes met his eyes, he simply grinned and I did the same.",
+            ko: ["아버지와 눈이 마주쳤을 때", "아버지는 그저 씩 웃으셨고", "나도 똑같이 했다."] }
+        ]
+      },
+      {
+        en_title: "Visit to an Old House",
+        ko_title: "낡은 집 방문",
+        sentences: [
+          { en: "Sarah approached the old, falling-apart house.",
+            ko: ["Sarah는 낡고 허물어져 가는 집으로", "다가갔다."] },
+          { en: "Her heart was pounding in her chest as she imagined all the horrors that could be hiding in its dark hallways.",
+            ko: ["어두운 복도에 숨어 있을지도 모르는 모든 공포를 상상하자", "그녀의 가슴 속에서 심장이 쿵쾅거렸다."] },
+          { en: "Sarah took a deep breath, paused for a moment, then gathered her courage to push open the squeaky door and enter the mysterious house.",
+            ko: ["Sarah는 깊은숨을 들이마시고,", "잠시 멈춰 선 다음,", "용기를 모아 삐걱거리는 문을 밀어젖혀", "불가사의한 집 안으로 들어갔다."] },
+          { en: "As she stepped inside and felt the warmth of sunlight filtering through the dusty windows, a sense of wonder and interest washed over her.",
+            ko: ["안으로 들어가", "먼지투성이인 창문을 통해 스며드는 따스한 햇살을 느꼈을 때,", "경이로움과 흥미로움이 그녀에게 밀려왔다."] },
+          { en: "The squeaky floors under her feet didn't seem to whisper tales of ghosts; instead, they sang a song of history and forgotten memories.",
+            ko: ["그녀 발밑의 삐걱거리는 마루는", "유령의 이야기를 속삭이는 것이 아니라", "오히려 역사와 잊혀진 추억의 노래를 부르는 듯했다."] },
+          { en: "With each step, Sarah's initial fear melted away, revealing an unstoppable desire to uncover the secrets hidden within the walls of this old house.",
+            ko: ["한 걸음씩 걸을 때마다,", "이 낡은 집의 벽 안에 숨겨진 비밀을 알아내고자 하는", "멈출 수 없는 열망을 드러내면서,", "Sarah의 처음의 두려움은 차츰 사라졌다."] }
+        ]
+      },
+      {
+        en_title: "The Taffy Making",
+        ko_title: "태피 사탕 만들기",
+        sentences: [
+          { en: "The wagons full of young friends started arriving.",
+            ko: ["젊은 친구들로 가득 찬 마차가", "도착하기 시작했다."] },
+          { en: "Everyone in and around the neighborhood knew the Jensen family, and was pleased to have been invited.",
+            ko: ["동네와 인근의 모든 사람이 Jensen 가족을 알고 있었고,", "초대받은 것을 기뻐했다."] },
+          { en: "Katie and Dolly were perfect hosts welcoming each guest.",
+            ko: ["Katie와 Dolly는", "각각의 손님을 맞이하는 완벽한 주인이었다."] },
+          { en: "When everyone had arrived they gathered in the kitchen for the taffy making.",
+            ko: ["모두가 도착하자,", "그들은 태피 만들기를 위해 주방에 모였다."] },
+          { en: "Katie mixed all the ingredients for the taffy candy, while the young men carried in wood for the old cook stove.",
+            ko: ["Katie는 태피 사탕을 위한 모든 재료를 섞었고,", "젊은 남자들은 오래된 조리용 화덕에", "사용할 땔감을 가져왔다."] },
+          { en: "She placed the ingredients in the huge iron frying pans, and soon the delicious smell of candy floated throughout the house.",
+            ko: ["그녀가 커다란 철제 프라이팬에 재료를 넣자", "곧 맛있는 사탕 냄새가 집 안 가득 퍼졌다."] },
+          { en: "There was a glass of cold water for testing the doneness of the candy.",
+            ko: ["사탕의 완성도를 테스트하기 위한", "찬물 한 잔이 놓여 있었다."] },
+          { en: "If the candy formed a soft ball when dropped in the glass of water, it was time to take it out of the frying pans and start beating it with a wooden spoon.",
+            ko: ["사탕을 물에 떨어뜨렸을 때", "부드러운 공 모양을 만들면,", "그것을 프라이팬에서 꺼내", "나무 숟가락으로 두드리기 시작할 때였다."] },
+          { en: "When the candy finally formed the perfect ball, cheers of excitement and joy echoed through the kitchen.",
+            ko: ["마침내 사탕이 완벽한 공 모양을 만들었을 때,", "흥분과 기쁨의 환호성이 주방에 울려 퍼졌다."] }
+        ]
+      }
+    ]
+  },
+  u3: {
+    chapter: 1, label: "UNIT 03",
+    title: "대의 파악 · 주장/요지 추론",
+    desc: "필자의 주장과 글 전체의 요지를 파악하는 지문 4개",
+    passages: [
+      {
+        en_title: "Cultural Differences and Diversity of Patients",
+        ko_title: "환자의 문화적 차이와 다양성",
+        sentences: [
+          { en: "The concept of justice is not the law in the narrow sense.",
+            ko: ["정의의 개념은", "좁은 의미의 법이 아니다."] },
+          { en: "Rather, this principle involves ensuring that everyone benefits from treatment, as well as the distribution of access to it.",
+            ko: ["오히려,", "이 원칙은 모든 사람이 치료의 혜택을 받을 수 있도록 보장하고,", "그것에 대한 접근성을 분배하는 것을 포함한다."] },
+          { en: "To apply this principle, we need to accept and value differences and diversity in our patients.",
+            ko: ["이 원칙을 적용하려면,", "우리는 환자의 차이와 다양성을", "인정하고 가치 있게 여겨야 한다."] },
+          { en: "Patients come from different cultural, racial and religious backgrounds.",
+            ko: ["환자는", "다양한 문화적, 인종적, 종교적 배경을 가지고 있다."] },
+          { en: "Therefore, fairness and justice in this respect involves respecting and recognising their differences, not acting in a way that disadvantages the patient.",
+            ko: ["따라서, 이러한 측면에서", "공정성과 정의는", "환자에게 불이익을 주는 방식으로 행동하는 것이 아니라,", "그들의 차이를 존중하고 인정하는 것을 포함한다."] },
+          { en: "In this regard, we need to consider other people's cultural differences when treating them.",
+            ko: ["이러한 점에서,", "우리는 다른 사람을 대할 때", "그들의 문화적 차이를 고려해야 한다."] },
+          { en: "Importantly, justice is about advocating on behalf of all patients, whether they come in with a Western philosophical perspective or another philosophical perspective.",
+            ko: ["중요한 것은 정의란", "환자가 서양의 철학적 관점을 가지고 오든", "혹은 다른 철학적 관점을 가지고 오든", "모든 환자를 대신하여 옹호하는 것에 관련된다는 것이다."] },
+          { en: "Justice is not about treating all patients the same because it is not possible to justifiably treat all patients the same, since all patients are different and present with different ailments or complaints.",
+            ko: ["정의는 모든 환자를 똑같이 치료하는 것이 아닌데,", "이는 모든 환자는 다르고 다양한 질병이나 고충을 나타내므로,", "모든 환자를 똑같이 정당하게 치료하는 것은 불가능하기 때문이다."] }
+        ]
+      },
+      {
+        en_title: "The Importance of Creating Green Cities",
+        ko_title: "친환경 도시 조성의 중요성",
+        sentences: [
+          { en: "Why have cities only recently seen a sudden increase in \"greening\" — from green roofs to new parks to tree planting to more energy efficient buses — despite the fact that sweeping federal environmental legislation was enacted more than 30 years ago?",
+            ko: ["포괄적인 연방 환경 법률이 법제화된 지 30년이 넘었다는 사실에도 불구하고", "최근에서야 도시에서 '친환경화'가", "갑자기 증가한 이유는 무엇일까?"] },
+          { en: "Quite simply, city leaders are recognizing that a cleaner environment is needed both to provide residents with a good quality of life and to compete in the global economy.",
+            ko: ["간단히 말해,", "도시의 지도자는", "주민에게 좋은 삶의 질을 제공하고", "동시에 글로벌 경제에서 경쟁하기 위해", "더 깨끗한 환경이 필요하다는 것을 인식하고 있다."] },
+          { en: "America's manufacturing-based economy of the twentieth century has been transformed into a service-based knowledge economy.",
+            ko: ["20세기 제조업 기반의 미국 경제는", "서비스 기반의 지식 경제로 변모했다."] },
+          { en: "For the information age economy, environmental quality is a major economic asset.",
+            ko: ["정보화 시대 경제에서,", "환경의 질은 주요한 경제적 자산이다."] },
+          { en: "Skilled workers are increasingly footloose, able to settle just about anywhere there is broadband Internet access, and they are drawn to healthy, aesthetically pleasing environments.",
+            ko: ["숙련된 근로자는 점점 더 매인 데가 없어져서,", "광대역 인터넷 접속이 가능한 곳이라면 거의 어디든 정착할 수 있으며,", "건강하고 미적으로 쾌적한 환경에 끌린다."] },
+          { en: "Moreover, green cities are demonstrating that the alleged trade-off between jobs and the environment is a false dichotomy.",
+            ko: ["게다가,", "녹색 도시는", "일자리와 환경 사이에 상충 관계가 있다고 주장하는 것이", "잘못된 이분법이라는 것을 보여 주고 있다."] },
+          { en: "A quality environment produces jobs; a polluted environment costs jobs.",
+            ko: ["양질의 환경은 일자리를 창출하고,", "오염된 환경은 일자리를 잃게 한다."] }
+        ]
+      },
+      {
+        en_title: "Memos Should Include All the Required Information",
+        ko_title: "필수 정보를 포함하는 메모",
+        sentences: [
+          { en: "The brevity of memos can be wonderful, but you do need to make sure you communicate everything, or you'll just end up creating more work for yourself.",
+            ko: ["메모의 간결함은 훌륭할 수 있지만,", "정말로 반드시 모든 것을 전달해야 하며,", "그렇지 않으면 결국 자신에게", "더 많은 일거리만 만들게 될 것이다."] },
+          { en: "For example, if you're using a memo to take a telephone message, make sure you include who called and when, what their message was, and how to call them back.",
+            ko: ["예를 들어,", "여러분이 전화 메시지를 기록하기 위해 메모를 사용하고 있다면,", "누가 언제 전화했는지,", "그들의 메시지가 무엇이었는지,", "어떻게 다시 전화할 수 있는지를 반드시 포함하라."] },
+          { en: "If you forget any of these details, your memo will be practically pointless.",
+            ko: ["이러한 세부 사항 중 하나라도 잊어버리면,", "여러분의 메모는 사실상 무의미할 것이다."] },
+          { en: "As you can see, it's very important not to sacrifice the content of your memo simply because memos are normally brief.",
+            ko: ["여러분이 알 수 있듯이,", "메모가 보통 간결하다는 이유만으로", "메모의 내용을 희생시키지 않는 것이 매우 중요하다."] },
+          { en: "If you can't fit all of the information you need into a memo, opt instead to write a letter or an e-mail.",
+            ko: ["만일 여러분이 필요한 모든 정보를 메모에 담을 수 없다면,", "대신에 편지나 이메일 쓰는 것을 선택하라."] },
+          { en: "It's better to include all of the information you need to transmit than it is to omit critical details simply for the sake of making your message short.",
+            ko: ["단지 메시지를 간결하게 만들기 위해", "중요한 세부 사항을 빠뜨리는 것보다,", "여러분이 전달해야 하는 모든 정보를 포함하는 것이 더 낫다."] }
+        ]
+      },
+      {
+        en_title: "Differences and Similarities between Male and Female Brains",
+        ko_title: "남녀 간의 뇌 차이와 유사성",
+        sentences: [
+          { en: "It is relatively uncontroversial that there are small structural and functional differences between male and female brains, perhaps contributing to some performance differences on tests of spatial and verbal abilities.",
+            ko: ["남성과 여성의 뇌에는 작은 구조적, 기능적 차이가 있어,", "아마도 이는 공간 및 언어 능력 테스트에서", "일부 수행 차이의 원인이 되리라는 것은", "비교적 논란의 여지가 없다."] },
+          { en: "Of paramount importance, but usually overlooked, is that similarities between the sexes far outweigh differences: differences between men and women are not as large as differences among members of the same sex.",
+            ko: ["최고로 중요하나 일반적으로 간과되는 것은", "남녀 간의 유사성이 차이보다 훨씬 더 중요하다는 것인데,", "남성과 여성 간의 차이는", "동성의 구성원 간 차이만큼 크지 않다."] },
+          { en: "Even those scientists who have discovered functional performance differences between the brains of males and females are careful to point out that their research is tentative and suggestive, and that while their research attends to differences, similarities abound: \"Fundamentally, the brains of men and women are more similar than different.\"",
+            ko: ["남성과 여성의 뇌 사이에서 기능적 수행 차이를 발견한", "그 과학자들조차도", "자신들의 연구가 잠정적이고 암시적이며,", "그들의 연구가 차이에 주목하기는 하지만", "유사성도 많다는 점을 조심스럽게 지적한다.", "\"근본적으로 남성과 여성의 뇌는 서로 다르기보다는 비슷하다.\""] }
+        ]
+      }
+    ]
+  },
+  u4: {
+    chapter: 1, label: "UNIT 04",
+    title: "대의 파악 · 함축적 의미 추론",
+    desc: "글의 요지를 압축해서 보여주는 밑줄 문장의 함축적 의미를 추론하는 지문 4개",
+    passages: [
+      {
+        en_title: "Malkiel's Random Walk and the Myth of Stock-Picking Skill",
+        ko_title: "맬킬의 랜덤 워크 이론과 주식 종목 선정의 환상",
+        flow: [
+          "도입: 맬킬이 \"인간은 무작위성을 받아들이기 어려워한다\"는 문제의식을 제시한다.",
+          "전개: 개별 주식의 움직임은 본질적으로 무작위적이라는 그의 핵심 주장을 설명한다.",
+          "부연: 꾸준히 수익을 내는 사람은 분산 투자와 장기 보유 원칙을 따르는 사람들임을 덧붙인다.",
+          "결론: 종목 선정은 과학보다 도박에 가까워, 고양이도 데이트레이더만큼 수익을 낼 수 있다고 마무리한다."
+        ],
+        sentences: [
+          { en: "\"Human nature likes order,\" wrote the economist Burton Malkiel in his seminal book A Random Walk Down Wall Street.",
+            ko: ["경제학자 버턴 맬킬은", "그의 기념비적인 저서 『랜덤 워크 투자수업』에서", "\"인간의 본성은 질서를 좋아한다\"라고 썼다."] },
+          { en: "\"People find it hard to accept the notion of randomness.\"",
+            ko: ["\"사람들은", "무작위성이라는 개념을 받아들이기 어려워한다.\""] },
+          { en: "Malkiel popularized the idea that the movement of any individual stock in the market is essentially random — it's impossible to know why a stock is doing what it's doing.",
+            ko: ["맬킬은", "시장에서 개별 주식의 움직임은 본질적으로 무작위적이어서,", "어떤 주식이 왜 그렇게 움직이는지 아는 것이 불가능하다는", "생각을 대중화했다."] },
+          { en: "People who reliably make money from the market are those who own a diverse portfolio of different kinds of investments, which spreads out the risk, with the broader principle that the market, over the long haul, will eventually increase in value.",
+            ko: ["시장에서 꾸준히 돈을 버는 사람들은", "다양한 종류의 투자로 구성된 분산 포트폴리오를 보유한 사람들인데,", "이는 위험을 분산시키며,", "장기적으로 시장이 결국 가치가 상승할 것이라는", "더 큰 원칙에 기반한다."] },
+          { en: "Picking individual stocks, or betting on certain trends, is much closer to gambling than science.",
+            ko: ["개별 주식을 고르거나,", "특정 추세에 베팅하는 것은", "과학보다는 도박에 훨씬 가깝다."] },
+          { en: "Which is why we shouldn't be too surprised that a cat is just as likely to make a killing on Wall Street as a day trader.",
+            ko: ["그것이 바로", "고양이가 데이트레이더만큼이나", "월가에서 대박을 낼 가능성이 있다는 것에", "우리가 그리 놀라서는 안 되는 이유이다."],
+            note: "밑줄 문장" }
+        ]
+      },
+      {
+        en_title: "The Complexity Behind Wilderness Tragedies",
+        ko_title: "야생 동물 습격 사건 속 반전",
+        flow: [
+          "도입: 야생을 탐험하다 위험한 상황에 처하는 사람들의 이야기로 시작한다.",
+          "전개: 곰·퓨마 등 야생동물이 드물지만 공격자로 돌변해 비극을 낳은 사례들이 누적돼 있음을 언급한다.",
+          "반전 예고: 그러나 이런 심각한 상황 속에도 예상 밖의 반전이 있음을 암시한다.",
+          "사례 1: 1995년 오리건 숲에서 퓨마의 소행으로 추정됐던 사망 사건이 실제로는 아니었음이 드러난다.",
+          "사례 2: 2015년에도 늑대 무리가 의심받았지만 결국 무고했음이 밝혀진다.",
+          "결론: 두 사례 모두 야생의 비극에는 생각보다 복잡한 진실이 숨어 있음을 강조하며 마무리한다."
+        ],
+        sentences: [
+          { en: "In the complex story of nature's ways, people exploring the wild's twisting paths often discover themselves caught in dangerous situations.",
+            ko: ["자연의 방식이라는 복잡한 이야기 속에서,", "야생의 구불구불한 길을 탐험하는 사람들은", "종종 위험한 상황에 처한 자신을 발견한다."] },
+          { en: "Bears, cougars, and other wild animals sometimes remind us of their formidable presence.",
+            ko: ["곰, 퓨마, 그리고 다른 야생 동물들은", "때때로 우리에게", "그들의 만만치 않은 존재감을 상기시킨다."] },
+          { en: "Despite the infrequency, there are a considerable number of accumulated instances where these guardians of the wilderness become aggressors, resulting in tragic outcomes for unsuspecting explorers.",
+            ko: ["그 빈도가 낮음에도 불구하고,", "이 야생의 수호자들이 공격자로 돌변하여", "방심한 탐험가들에게 비극적인 결과를 초래한", "누적된 사례가 상당수 존재한다."] },
+          { en: "Yet amid these serious situations, a remarkable turn of events occurs, like unexpected notes in a familiar song.",
+            ko: ["그러나 이러한 심각한 상황들 속에서도,", "마치 익숙한 노래 속 예기치 못한 음표처럼,", "놀라운 반전이 일어난다."],
+            note: "밑줄 문장" },
+          { en: "In Oregon's forests in 1995, a man was found dead, initially blamed on a cougar, but subsequent investigation revealed otherwise.",
+            ko: ["1995년 오리건주의 숲에서,", "한 남자가 죽은 채 발견되었는데,", "처음에는 퓨마의 소행으로 여겨졌지만,", "이후의 조사는 그렇지 않다는 것을 밝혀냈다."] },
+          { en: "Similarly, in 2015, a comparable incident occurred, with initial suspicions falling on a nearby wolf pack.",
+            ko: ["마찬가지로, 2015년에도", "비슷한 사건이 일어났는데,", "처음에는 인근의 늑대 무리가 의심을 받았다."] },
+          { en: "However, upon closer investigation, it became apparent that the wolves were innocent bystanders in the man's tragic fate, emphasizing the complexity inherent in such wilderness tragedies.",
+            ko: ["그러나 더 면밀한 조사 결과,", "그 늑대들은 그 남자의 비극적인 죽음에 있어", "무고한 방관자였다는 것이 드러났고,", "이는 이러한 야생의 비극에 내재된", "복잡성을 강조한다."] }
+        ]
+      },
+      {
+        en_title: "Architects' Ambivalence Toward Design Competitions",
+        ko_title: "건축 설계 공모전에 대한 양가감정",
+        flow: [
+          "도입: 건축가들이 설계 공모전에 대해 양가적 감정을 가진다는 주제를 제시한다.",
+          "건축가 입장: 비용이 많이 들고 의뢰인과의 소통 없이 진행돼야 한다는 단점을, I. M. 페이의 사례로 뒷받침한다.",
+          "대중·의뢰인·모금자 입장: 반대로 각자 다른 이유로 공모전을 선호한다는 점을 대비시킨다.",
+          "결론: \"모두가 경마를 좋아하지만 말들은 예외일 수 있다\"는 비유로 이해관계자 간의 온도차를 압축한다."
+        ],
+        sentences: [
+          { en: "Architects are ambivalent about competitions.",
+            ko: ["건축가들은", "설계 공모전에 대해", "양가적인 감정을 가지고 있다."] },
+          { en: "On a practical level, competitions are extremely expensive: entering a large competition can cost millions of dollars.",
+            ko: ["실질적인 측면에서,", "공모전은 비용이 매우 많이 드는데,", "대규모 공모전에 참가하는 데에는", "수백만 달러가 들 수 있다."] },
+          { en: "More important, competitions oblige the architect to work in a vacuum.",
+            ko: ["더 중요한 것은,", "공모전은 건축가가", "(의뢰인과 단절된) 진공 상태에서", "작업하도록 강요한다는 것이다."] },
+          { en: "In later life, I. M. Pei refused to enter competitions, since he considered that the best architecture could emerge only from a considered dialogue between architect and client.",
+            ko: ["말년에,", "I. M. 페이는 공모전 참가를 거부했는데,", "최고의 건축은", "건축가와 의뢰인 사이의 신중한 대화에서만", "나올 수 있다고 여겼기 때문이다."] },
+          { en: "Nevertheless, the public favors competitions, since they provide an opportunity for young talent to be recognized in a field that tends to privilege age and experience.",
+            ko: ["그럼에도 불구하고,", "대중은 공모전을 선호하는데,", "이는 나이와 경험을 우대하는 경향이 있는 분야에서", "젊은 인재가 인정받을 기회를 제공하기 때문이다."] },
+          { en: "Clients like competitions, since they provide an opportunity to choose between several designs — and several architects — while fund-raisers use competitions as a way to raise public interest in a building project.",
+            ko: ["의뢰인은 공모전을 좋아하는데,", "이는 여러 설계안, 그리고 여러 건축가 중에서", "선택할 기회를 제공하기 때문이며,", "한편 모금 담당자들은", "공모전을 건축 프로젝트에 대한 대중의 관심을 끌어모으는", "방법으로 활용한다."] },
+          { en: "Everyone loves a horse race — except, perhaps, the horses.",
+            ko: ["모든 사람은 경마를 좋아한다", "— 아마도, 그 말들만 제외하고는."],
+            note: "밑줄 문장" }
+        ]
+      },
+      {
+        en_title: "The Unconscious Warning in Bechara's Card Experiment",
+        ko_title: "베카라의 카드 실험이 보여주는 무의식의 경고",
+        flow: [
+          "도입: 베카라의 카드 실험 설계(2,000달러의 게임 머니, 네 벌의 카드 더미)를 소개한다.",
+          "전개: 카드는 무작위가 아니었고, 일부 더미가 더 수익성이 좋았다는 실험의 핵심 장치를 설명한다.",
+          "결과 1: 참가자들이 의식적인 '예감'을 느끼기까지는 약 50번의 시도가 필요했다.",
+          "결과 2: 그러나 피부 전도도 측정 결과, 몸은 단 10번 만에 이미 나쁜 더미를 감지하고 경고하고 있었다.",
+          "결론: \"그들은 알기도 전에 이미 알고 있었다\"는 문장으로 무의식이 의식보다 먼저 반응한다는 결론을 압축한다."
+        ],
+        sentences: [
+          { en: "In an experiment conducted by Antoine Bechara, participants were given $2,000 in play money and four decks of cards and were told that they were to use them in a game.",
+            ko: ["앙투안 베카라가 수행한", "한 실험에서,", "참가자들은 2,000달러의 게임용 돈과", "네 벌의 카드 더미를 받았고,", "그것들을 게임에 사용하게 될 것이라고 들었다."] },
+          { en: "Different individual cards won or lost different sums of money.",
+            ko: ["각각의 카드는", "서로 다른 액수의 돈을", "따거나 잃게 했다."] },
+          { en: "They should just go ahead and turn the cards and try to win as much money as they could.",
+            ko: ["그들은 그저", "카드를 뒤집으며", "최대한 많은 돈을 따려고 노력하면 되었다."] },
+          { en: "But the cards were not random.",
+            ko: ["그러나", "그 카드들은 무작위가 아니었다."] },
+          { en: "In fact, some of the piles were far more profitable than others.",
+            ko: ["사실,", "몇몇 더미는", "다른 더미들보다 훨씬 더 수익성이 좋았다."] },
+          { en: "On average, it took the gamblers around fifty card-turns before they began to report a conscious 'hunch' that some of the decks were more profitable.",
+            ko: ["평균적으로,", "도박꾼들이", "몇몇 카드 더미가 더 수익성이 좋다는", "의식적인 '예감'을 보고하기 시작하기까지", "약 50번의 카드 뒤집기가 걸렸다."] },
+          { en: "But when their behaviour was analysed, Bechara discovered something remarkable.",
+            ko: ["그러나 그들의 행동이 분석되었을 때,", "베카라는 놀라운 것을 발견했다."] },
+          { en: "Measurements of the electrical conductance of their skin, which can reveal levels of anxiety and nervousness, indicated that their emotions were subtly warning them against the bad decks after just ten turns.",
+            ko: ["불안과 초조함의 정도를 드러낼 수 있는", "그들의 피부 전기 전도도 측정 결과,", "그들의 감정이 단 열 번의 카드 뒤집기 후부터", "이미 나쁜 더미에 대해", "은근히 그들에게 경고하고 있었다는 것이 나타났다."] },
+          { en: "Their unconscious mind had worked out what was happening far quicker than their conscious minds and had warned them with a hit of bad feeling.",
+            ko: ["그들의 무의식은", "의식보다 훨씬 더 빨리", "무슨 일이 일어나고 있는지 알아냈고,", "불길한 느낌을 통해", "그들에게 경고했다."] },
+          { en: "They knew before they knew.",
+            ko: ["그들은", "알기도 전에", "이미 알고 있었다."],
+            note: "밑줄 문장" }
+        ]
+      }
+    ]
+  },
+  u5: {
+    chapter: 1, label: "UNIT 05",
+    title: "대의 파악 · 주제/제목 추론",
+    desc: "글의 주제와 제목을 추론하는 지문 5개 + 논술형 지문 1개",
+    passages: [
+      {
+        en_title: "The Introduction of Scientific Method and Rising Status of Medical Profession",
+        ko_title: "과학적 방법 도입과 의료 전문직의 지위 상승",
+        sentences: [
+          { en: "The introduction of scientific methods into medical practice transformed the profession as well as its object.",
+            ko: ["과학적 방법이 의료 행위에 도입되면서", "그것의 목적뿐만 아니라", "(의료) 전문직도 바뀌었다."] },
+          { en: "Until the late nineteenth century, doctors were not required to have studied medicine and were relied on mainly to provide comfort and guidance to their patients.",
+            ko: ["19세기 후반까지", "의사들은 의학 공부를 요구받지 않았고,", "주로 환자들에게 위안과 지침을 제공하기 위해", "의지되었다."] },
+          { en: "As the practice of medicine shifted from cure to prevention, doctors were now expected to provide results based on scientific evidence.",
+            ko: ["의료 행위가 치료에서 예방으로 옮겨 가면서", "의사들은 이제", "과학적 증거에 기반한 결과를 제공하도록 기대되었다."] },
+          { en: "As a result of this access to forms of knowledge beyond the understanding of the general public, more authority and power was granted to the medical profession, and the nature of the doctor/patient relationship changed.",
+            ko: ["일반 대중의 이해 범위를 벗어나는", "형태의 지식에 이렇게 접근할 수 있게 됨에 따라", "의료 전문직은 더 많은 권위와 권한을 부여받았고,", "의사/환자 관계의 본질이 바뀌었다."] },
+          { en: "Once the source of a disease was identified, patients expected that doctors should be able to cure them.",
+            ko: ["질병의 원인이 확인되면", "환자들은 의사가 자신을 치료할 수 있을 것으로 기대했다."] },
+          { en: "Additionally, those doctors with scientific training were now distinguished from a range of alternative healers, from homeopaths to midwives, resulting in an elevation in the eyes of the public of the status of the profession as compared with other healing practices, which persists today.",
+            ko: ["게다가 과학적 훈련을 받은 의사들은", "이제 유사 요법 의사부터 조산사에 이르기까지", "다양한 대체 치료사와 구별되어,", "대중들이 보기에 다른 치료 행위에 비해", "의료 전문직의 지위가 상승하는 결과를 낳았으며,", "이는 오늘날까지 지속되고 있다."] }
+        ]
+      },
+      {
+        en_title: "Effects of Coastal City's Lights on Sea Turtles",
+        ko_title: "해안 도시 불빛이 바다거북에 미치는 영향",
+        sentences: [
+          { en: "For millions of years, sea turtles would come to the beaches of Florida to spawn and their hatchlings would head toward the sea — to live a life far away — and to return to Florida years later.",
+            ko: ["수백만 년 동안 바다거북은", "알을 낳기 위해 플로리다 해변에 왔고,", "갓 부화한 새끼들은 바다를 향해 나아가", "먼 곳에서 삶을 살다가", "몇 년 후 플로리다로 돌아오곤 했다."] },
+          { en: "It turns out that the way the young turtles knew to head toward the direction of the ocean was based on light glimmering off the sea at night.",
+            ko: ["어린 거북들이 바다가 있는 방향을 향해 나아가기 위해 알았던 방법은", "밤에 바다에서 반사되어 나오는", "희미하게 빛나는 빛에 근거하고 있었음이 밝혀졌다."] },
+          { en: "The sea beautifully reflects the light of the moon and the stars, and for millions of years, a simple algorithm of \"head toward the light at night\" allowed the turtles to effectively head toward the sea to pursue an effective life strategy.",
+            ko: ["바다는 달과 별의 빛을 아름답게 반사하고,", "수백만 년 동안", "\"밤에는 빛을 향해 나아가라.\"라는 간단한 알고리즘은", "거북들이 바다를 향해 효과적으로 나아가", "효과적인 삶의 전략을 추구할 수 있게 했다."] },
+          { en: "Well, then came Miami.",
+            ko: ["그런데 이후에", "Miami가 등장했다."] },
+          { en: "Miami and the other big cities on the coast of Florida are filled with lots of bright lights at night, so this led to an ecological disaster for the sea turtles.",
+            ko: ["Miami와 플로리다 해안가의 다른 대도시들은", "밤에 많은 밝은 불빛으로 가득 차 있어서,", "이는 바다거북에 생태학적 재앙을 초래했다."] },
+          { en: "Shaped by evolution to head toward light at night, hatchlings started toward the highways and cities by the millions — meeting premature death instead of a long sea-dwelling life.",
+            ko: ["진화에 의해 밤에 빛을 향해 나아가도록 만들어진", "갓 부화한 새끼들은 수백만 마리가", "고속 도로와 도시로 향하기 시작했고,", "바다에서 살며 장수를 누리는 대신", "때 이른 죽음을 맞이했다."] }
+        ]
+      },
+      {
+        en_title: "Immigrants' Contribution to Job Creation",
+        ko_title: "일자리 창출에 대한 이민자의 기여",
+        sentences: [
+          { en: "Those who migrate out of poor countries today need to have the money to afford the cost of travel and have the grit (or the advanced degrees) required to overcome a system of immigration control typically loaded against them.",
+            ko: ["오늘날 가난한 나라로부터 이주하는 사람들은", "이동 비용을 감당할 수 있는 돈이 있어야 하고,", "일반적으로 그들에게 부담을 주는", "출입국 관리 시스템을 극복하는 데 필요한", "근성(또는 고급 학위)이 있어야 한다."] },
+          { en: "For this reason, a lot of them bring exceptional talents — skills, ambition, patience, and stamina — that help them become job creators, or raise children who will be job creators.",
+            ko: ["이러한 이유로 그들 중 상당수는", "기술, 야망, 인내심, 체력 등", "그들이 일자리 창출자가 되거나", "일자리 창출자가 될 자녀를 양육하는 데 도움이 되는", "뛰어난 재능을 가져온다."] },
+          { en: "A report by the Center for American Entrepreneurship found that, in 2017, out of the largest five hundred US companies by revenue, 43 percent were founded or co-founded by immigrants or the children of immigrants.",
+            ko: ["미국 기업가 정신 센터의 보고서에 따르면,", "2017년 수입 기준", "미국에서 가장 큰 500개 회사 중 43퍼센트는", "이민자 또는 이민자의 자녀가", "설립했거나 공동 설립했음이 밝혀졌다."] },
+          { en: "Moreover, immigrant-founded firms account for 52 percent of the top twenty-five firms, 57 percent of the top thirty-five firms, and nine of the top thirteen most valuable brands.",
+            ko: ["게다가,", "이민자가 설립한 기업은", "상위 25개 기업 중 52퍼센트,", "상위 35개 기업 중 57퍼센트,", "가장 가치 있는 브랜드 상위 13개 중 9개를 차지한다."] },
+          { en: "Henry Ford was the son of an Irish immigrant. Steve Jobs's biological father was from Syria. Sergey Brin was born in Russia.",
+            ko: ["Henry Ford는 아일랜드 이민자의 아들이었다.", "Steve Jobs의 친아버지는 시리아 출신이었다.", "Sergey Brin은 러시아에서 태어났다."] }
+        ]
+      },
+      {
+        en_title: "Artists Using Garbage",
+        ko_title: "쓰레기를 활용하는 예술가",
+        sentences: [
+          { en: "Traditionally, garbage is considered the detritus of consumer and industrial practices.",
+            ko: ["전통적으로,", "쓰레기는 소비자 및 산업 관행의 부산물로 여겨진다."] },
+          { en: "It is the stuff that is no longer useful that we no longer wish to have in our homes or personal spaces, that we want to throw away.",
+            ko: ["그것은 더 이상 유용하지 않고,", "우리가 집이나 개인 공간에 더 이상 두고 싶지 않으며,", "우리가 버리고 싶은 것이다."] },
+          { en: "Perhaps precisely due to the proliferation of trash in material space, it has arguably also become a resource — something that has value and can be sold on at a profit.",
+            ko: ["아마 바로 물질적 공간에서의", "쓰레기의 급증 때문에,", "그것은 또한 거의 틀림없이 자원,", "즉 가치가 있고 이윤을 남겨 팔 수 있는", "무언가가 되었다."] },
+          { en: "Artists — most often at the leading edge of rethinking materiality, value, and beauty — are among the first social actors to have taken seriously the possibility of reusing trash to make new things.",
+            ko: ["예술가들은 가장 자주", "물질성, 가치, 아름다움을 재고하는 데 있어서 최첨단에 있는데,", "새로운 것을 만들기 위해 쓰레기를 재사용할 수 있다는 가능성을", "가장 먼저 진지하게 받아들인", "사회적 행위자 중 하나이다."] },
+          { en: "Taking the discarded objects of others as found materials, many artists work with trash in order to create new aesthetic objects while at the same time making a commentary on the place of trash in the social and cultural world.",
+            ko: ["다른 사람의 버려진 물건을 재활용 재료로 삼아,", "많은 예술가는 새로운 미적 대상을 만들기 위해", "쓰레기를 가지고 작업하는 동시에", "사회적, 문화적 세계에서의", "쓰레기의 지위에 대해 논평하기도 한다."] }
+        ]
+      },
+      {
+        en_title: "The Constantly Changing Nature of Consciousness",
+        ko_title: "끊임없이 변화하는 의식의 흐름",
+        sentences: [
+          { en: "The contents of your consciousness are continually changing.",
+            ko: ["의식의 내용은", "끊임없이 변화하고 있다."] },
+          { en: "Rarely does consciousness come to a standstill.",
+            ko: ["의식이 정지하는 경우는", "거의 없다."] },
+          { en: "It moves, it flows, it fluctuates, it wanders.",
+            ko: ["그것은 움직이고,", "흐르고,", "계속 변화하고,", "방황한다."] },
+          { en: "For example, in one study, 2,250 adults were contacted randomly during waking hours and asked whether their mind was wandering from their current activity.",
+            ko: ["예를 들어,", "한 연구에서 2,250명의 성인에게", "깨어 있는 시간 동안 무작위로 연락하여,", "현재 하는 활동으로부터", "자신의 마음이 산란해지고 있는지 물었다."] },
+          { en: "Almost half (47%) of the times they were asked to report, the participants said their mind was wandering.",
+            ko: ["의견을 달라고 요청받은 횟수의", "거의 절반(47퍼센트)의 경우에,", "참가자는 자신의 마음이 산란해지고 있다고 말했다."] },
+          { en: "Another study concluded that mind wandering was more likely when subjects were bored, anxious, tired, or stressed.",
+            ko: ["또 다른 연구는", "피험자가 지루하거나 불안하거나 피곤하거나 스트레스를 받을 때", "마음이 산란해질 가능성이 더 크다는 결론을 내렸다."] },
+          { en: "Recognizing that consciousness fluctuates continuously, William James long ago named this flow the stream of consciousness.",
+            ko: ["William James는", "의식이 끊임없이 계속 변화한다는 사실을 인식하고,", "오래전에 이 흐름을", "'의식의 흐름'이라고 명명했다."] },
+          { en: "If you could tape-record your thoughts, you would find an endless flow of ideas that zigzag in all directions.",
+            ko: ["만약 여러분의 생각을 테이프에 녹음할 수 있다면,", "사방으로 지그재그로 나아가는", "끝없는 생각의 흐름을 발견할 수 있을 것이다."] },
+          { en: "Even when you sleep, your consciousness moves through a series of transitions.",
+            ko: ["여러분이 잠을 자는 동안에도,", "여러분의 의식은", "일련의 변화를 통해 움직인다."] }
+        ]
+      },
+      {
+        en_title: "A Bad Dining Experience at the Restaurant",
+        ko_title: "레스토랑에서의 나쁜 식사 경험 (논술형)",
+        sentences: [
+          { en: "I hope this letter finds you well.",
+            ko: ["이 편지가", "잘 전달되길 바랍니다."] },
+          { en: "I am writing to complain about a meal we had at your restaurant yesterday.",
+            ko: ["저는 어제 귀하의 레스토랑에서 먹은 식사에 대해", "항의하기 위해 편지를 씁니다."] },
+          { en: "We had booked a table for six, but when we arrived there were no free tables and we had to wait for more than 45 minutes to sit down.",
+            ko: ["우리는 6인용 테이블을 예약했지만,", "도착했을 때 빈 테이블이 없어서", "자리에 앉기 위해 45분 넘게 기다려야 했습니다."] },
+          { en: "Among the 12 dishes on the menu, only four were available, and the ones we ordered were not prepared well.",
+            ko: ["메뉴에 있는 12가지 요리 중 4개만 이용할 수 있었고,", "우리가 주문한 요리는 제대로 준비되지 않았습니다."] },
+          { en: "In particular, the fish did not taste fresh, and the waiter was even rude when we told him about this.",
+            ko: ["특히, 생선 맛이 신선하지 않았고,", "웨이터는 우리가 이에 관해 이야기했을 때", "무례하기까지 했습니다."] },
+          { en: "We have eaten at your restaurant several times in the past, but this is the first time we have received such bad service.",
+            ko: ["우리는 과거에 귀하의 레스토랑에서", "여러 번 식사를 한 적이 있지만,", "이렇게 나쁜 서비스를 받은 것은 처음입니다."] },
+          { en: "I am not requesting a refund, but I would appreciate if you could address these issues and improve the quality of your dishes and service.",
+            ko: ["제가 환불을 요구하는 것은 아니지만,", "귀하께서 이 문제를 처리하고", "요리와 서비스의 질을 개선해 주시면 감사하겠습니다."] }
+        ]
+      }
+    ]
+  },
+  u6: {
+    chapter: 2, label: "UNIT 06",
+    title: "정보 파악 · 도표/실용문",
+    desc: "안내문과 도표를 읽고 세부 정보를 파악하는 지문 3개",
+    passages: [
+      {
+        en_title: "Concertoi Piano Lessons",
+        ko_title: "Concertoi 피아노 레슨 안내문",
+        sentences: [
+          { en: "Concertoi Piano Lessons by Tammy Keller",
+            ko: ["Tammy Keller의", "Concertoi 피아노 레슨"] },
+          { en: "Accepting Only 8 Students!",
+            ko: ["단 8명의 학생만", "받습니다!"] },
+          { en: "Registration Fee: $40 (includes the first week's lesson, lesson books, theory books, and supplemental materials)",
+            ko: ["등록비: $40", "(첫 주 레슨, 레슨 교재, 이론 교재, 보충 자료 포함)"] },
+          { en: "Weekly Lesson Fee — Ages 4-6: $10 per 30 minutes / Ages 7-Adult: $15 per hour",
+            ko: ["주간 레슨비 — 4~6세: 30분당 $10,", "7세~성인: 1시간당 $15"] },
+          { en: "Lessons are held on Mondays during the Summer.",
+            ko: ["레슨은 여름 동안", "월요일마다 진행됩니다."] },
+          { en: "Summer Lessons begin Monday, July 14.",
+            ko: ["여름 레슨은", "7월 14일 월요일에 시작합니다."] },
+          { en: "Available Lesson Times: 11:30 AM-6:30 PM",
+            ko: ["레슨 가능 시간:", "오전 11:30 ~ 오후 6:30"] },
+          { en: "Location: 143 Grove Street, Midtown, 12511",
+            ko: ["장소:", "143 Grove Street, Midtown, 12511"] },
+          { en: "To secure your spot, call (205) 500-6134.",
+            ko: ["자리를 확보하려면,", "(205) 500-6134로 전화하세요."] }
+        ]
+      },
+      {
+        en_title: "U.S. Teens' Perceptions of the Impacts of Smartphones",
+        ko_title: "스마트폰 영향에 대한 미국 10대의 인식 (도표)",
+        table: {
+          caption: "% of U.S. teens ages 13 to 17 who said that using smartphones makes it — for people their age to do the following",
+          headers: ["", "Easier", "Neither easier nor harder", "Harder"],
+          rows: [
+            ["Pursue hobbies and interests", "69", "18", "13"],
+            ["Be creative", "65", "21", "13"],
+            ["Do well in school", "45", "30", "23"],
+            ["Develop healthy friendships", "37", "31", "31"],
+            ["Learn good social skills", "30", "27", "42"]
+          ]
+        },
+        sentences: [
+          { en: "The above graph shows U.S. teens' perceptions of how using smartphones affects five specific aspects of life.",
+            ko: ["위 그래프는", "스마트폰 사용이 삶의 다섯 가지 특정 측면에 미치는 영향에 대한", "미국 10대들의 인식을 보여준다."] },
+          { en: "More than two-thirds of teens said using smartphones makes it easier for people their age to pursue hobbies and interests.",
+            ko: ["10대의 3분의 2 이상이", "스마트폰 사용이 또래들이 취미와 관심사를 추구하는 것을", "더 쉽게 만든다고 답했다."] },
+          { en: "When it comes to being creative, less than 20% of teens responded that the use of smartphones makes the process harder.",
+            ko: ["창의성에 관해서는,", "10대의 20% 미만이", "스마트폰 사용이 그 과정을 더 어렵게 만든다고 응답했다."] },
+          { en: "The percentage of teens who said smartphones make it easier for teens to do well in school was 45%, which is 15 percentage points higher than that of teens who said smartphones make it neither easier nor harder to do so.",
+            ko: ["스마트폰이 학교생활을 잘하는 것을 더 쉽게 만든다고 답한 10대의 비율은 45%였는데,", "이는 스마트폰이 그것을 더 쉽게도 더 어렵게도 만들지 않는다고 답한", "10대의 비율보다 15퍼센트포인트 더 높은 수치이다."] },
+          { en: "The percentage of U.S. teens who said using smartphones makes it easier to develop healthy friendships was the same as that of those who said it makes the process harder.",
+            ko: ["스마트폰 사용이 건강한 우정을 쌓는 것을 더 쉽게 만든다고 답한", "미국 10대의 비율은", "그것을 더 어렵게 만든다고 답한 비율과 동일했다."] }
+        ]
+      },
+      {
+        en_title: "Population by Young, Working Age, and Older Groups",
+        ko_title: "연령대별 인구 비율 (도표)",
+        table: {
+          caption: "Population by Young, Working Age, and Older Groups, 2021 (Young: Under 15 / Working age: 15-64 years / Older: Over 65)",
+          headers: ["", "Young", "Working age", "Older"],
+          rows: [
+            ["Japan", "12%", "58%", "30%"],
+            ["Kenya", "38%", "59%", "3%"],
+            ["United States", "18%", "65%", "17%"],
+            ["Italy", "13%", "64%", "23%"]
+          ]
+        },
+        sentences: [
+          { en: "The graph above shows the share of the population of people in young, working age, and older groups in four selected countries in 2021.",
+            ko: ["위 그래프는", "2021년 선정된 네 국가에서", "유소년층, 생산연령층, 노년층 인구의 비율을 보여준다."] },
+          { en: "Among the countries, Japan exhibited the lowest proportion of young individuals and the highest proportion of older individuals, indicating its status as an aging society.",
+            ko: ["국가들 중에서,", "일본은 유소년층 비율이 가장 낮고", "노년층 비율이 가장 높아", "고령화 사회임을 나타냈다."] },
+          { en: "In contrast, Kenya stood out with 38 percent of its population falling into the young age group and only 3 percent in the older group, making it the country with the largest percentage point difference between these two age groups.",
+            ko: ["대조적으로, 케냐는", "인구의 38%가 유소년층에 속하고", "노년층은 단 3%에 불과해,", "이 두 연령대 사이의 퍼센트포인트 차이가 가장 큰 국가로 두드러졌다."] },
+          { en: "Of the four countries, the United States displayed the smallest gap between the percentage of young and older groups, with just a 1 percentage point difference.",
+            ko: ["네 국가 중,", "미국은 유소년층과 노년층 비율 간의 격차가 가장 작아,", "단 1퍼센트포인트 차이만 보였다."] },
+          { en: "Across all four countries, the working age group accounted for the largest proportion, exceeding 50 percent in each country.",
+            ko: ["네 국가 모두에서,", "생산연령층이 가장 큰 비율을 차지했으며,", "각국에서 50%를 넘었다."] },
+          { en: "Italy had the highest percentage of working age people among the four countries, at 64 percent.",
+            ko: ["이탈리아는 네 국가 중", "생산연령층 비율이 64%로", "가장 높았다."],
+            strike: true, note: "오답 문장 (원문 취소선)" }
+        ]
+      },
+      {
+        en_title: "Zero Carbon Footprint Camp",
+        ko_title: "탄소 발자국 제로 캠프 안내문",
+        sentences: [
+          { en: "Join us for the Zero Carbon Footprint Camp, an exciting opportunity for Pelton High School students to explore the importance of taking action on climate change.",
+            ko: ["Zero Carbon Footprint 캠프에 함께해 주세요.", "이는 Pelton 고등학교 학생들이", "기후 변화에 대한 행동의 중요성을 탐구할 수 있는", "흥미로운 기회입니다."] },
+          { en: "Camp Program: 1. Listening to a guest speaker's presentation on climate change",
+            ko: ["캠프 프로그램 1.", "기후 변화에 관한 초청 연사의 발표 듣기"] },
+          { en: "2. Participating in discussions about climate change and its impact on our planet",
+            ko: ["2. 기후 변화와 그것이 지구에 미치는 영향에 대한", "토론 참여하기"] },
+          { en: "3. Calculating your own carbon footprint using online tools",
+            ko: ["3. 온라인 도구를 사용하여", "자신의 탄소 발자국 계산하기"] },
+          { en: "4. Contributing to our campus garden by planting trees",
+            ko: ["4. 나무를 심어", "캠퍼스 정원에 기여하기"] },
+          { en: "(In case of rain, the gardening session will be replaced with craft activities.)",
+            ko: ["(비가 올 경우,", "정원 활동 시간은 공예 활동으로 대체됩니다.)"] },
+          { en: "Date: May 18 (Saturday) / Time: 10:00 a.m.-5:00 p.m. / Location: Pelton High School",
+            ko: ["날짜: 5월 18일(토요일)", "시간: 오전 10시 ~ 오후 5시", "장소: Pelton 고등학교"] },
+          { en: "Participation Fee: $10 per person (includes lunch)",
+            ko: ["참가비: 1인당 $10", "(점심 포함)"] },
+          { en: "Reserve your spot online at www.peltonhighschool.org by May 8. Hurry, as spots are limited!",
+            ko: ["5월 8일까지", "www.peltonhighschool.org에서 온라인으로 예약하세요.", "자리가 한정되어 있으니 서두르세요!"] }
+        ]
+      }
+    ]
+  },
+  u7: {
+    chapter: 2, label: "UNIT 07",
+    title: "세부내용 파악 · 인물/설명문",
+    desc: "인물, 동식물, 경제 현상을 다루는 설명문 6개",
+    passages: [
+      {
+        en_title: "Ancient Chinese Ball Game, Cuju",
+        ko_title: "고대 중국의 공놀이, 축국",
+        sentences: [
+          { en: "Cuju, an ancient Chinese ball game, holds a significant place in sporting history.",
+            ko: ["고대 중국의 공놀이인 축국은,", "스포츠 역사에서 중요한 위치를 차지하고 있다."] },
+          { en: "It was recognized by FIFA as one of the earliest foot-based sports.",
+            ko: ["그것은 FIFA에 의해", "가장 초기의 발을 사용한 스포츠 중 하나로 인정받았다."] },
+          { en: "However, Cuju's influence on modern football was not direct.",
+            ko: ["그러나", "현대 축구에 대한 축국의 영향은 직접적이지 않았다."] },
+          { en: "In Cuju, players aimed to kick the ball through a central hoop without letting it touch the ground, all while following the rule of not using their hands.",
+            ko: ["축국에서 선수들은", "손을 사용하지 않는다는 규칙을 지키면서,", "공이 땅에 닿지 않게 한 채로", "중앙의 고리를 통과하도록 차는 것을 목표로 했다."] },
+          { en: "Traditionally, the ball was crafted from leather, and matches took place on fields with two teams of equal size.",
+            ko: ["전통적으로 공은 가죽으로 만들어졌으며,", "경기는 동일한 인원수의 두 팀으로", "경기장에서 진행되었다."] },
+          { en: "Players wore light and flexible clothes to move easily during the game.",
+            ko: ["선수들은 경기 중에 쉽게 움직이기 위해", "가볍고 신축성 있는 옷을 입었다."] },
+          { en: "Beyond its sporting aspect, Cuju holds cultural significance in China, often included in celebratory occasions and events, highlighting its deep-rooted history in the country's heritage.",
+            ko: ["스포츠적인 측면을 넘어,", "축국은 중국에서 문화적 의의를 가지며,", "축하 행사와 기념일에 자주 포함되어,", "그 나라의 유산 속 뿌리 깊은 역사를 부각시킨다."] }
+        ]
+      },
+      {
+        en_title: "Nobel Peace Prize Winner Ralph J. Bunche",
+        ko_title: "노벨 평화상 수상자 Ralph J. Bunche",
+        sentences: [
+          { en: "Ralph J. Bunche was born on August 7, 1904, into a poor household.",
+            ko: ["Ralph J. Bunche는", "1904년 8월 7일,", "가난한 가정에서 태어났다."] },
+          { en: "After his parents died, Bunche's grandmother moved the family to Los Angeles, California.",
+            ko: ["부모님이 돌아가신 후,", "Bunche의 할머니는", "가족을 캘리포니아주 로스앤젤레스로 이주시켰다."] },
+          { en: "The only African American in his class, he earned the highest grades and graduated from his high school with honors, and was easily admitted to UCLA.",
+            ko: ["학급에서 유일한 아프리카계 미국인이었던 그는", "최고 성적을 받았고", "고등학교를 우등으로 졸업했으며,", "어렵지 않게 UCLA에 입학했다."] },
+          { en: "Although he graduated with honors, a lack of money stood in the way of his dreams of attending Harvard Law School.",
+            ko: ["그는 우등으로 졸업했지만,", "돈의 부족이", "하버드 법대에 진학하려는 그의 꿈을 가로막았다."] },
+          { en: "Fortunately, a women's club in the area raised the money to help him pay for tuition.",
+            ko: ["다행히도,", "그 지역의 한 여성 클럽이", "그의 학비 지불을 돕기 위한 돈을 모금했다."] },
+          { en: "During World War II, Bunche was asked to work for the State Department, and he helped to found the United Nations.",
+            ko: ["제2차 세계대전 동안,", "Bunche는 국무부에서 일해 달라는 요청을 받았고,", "그는 유엔 설립을 도왔다."] },
+          { en: "His first important negotiating job came during the 1948 war between the Arabs and Israelis.",
+            ko: ["그의 첫 번째 중요한 협상 업무는", "1948년 아랍인과 이스라엘인 사이의 전쟁 중에 찾아왔다."] },
+          { en: "Much to his and the world's relief, a peace treaty was finally signed.",
+            ko: ["그와 전 세계가 크게 안도한 가운데,", "마침내 평화 조약이 체결되었다."] },
+          { en: "In 1950, he was awarded the Nobel peace prize.",
+            ko: ["1950년,", "그는 노벨 평화상을 수상했다."] },
+          { en: "Ralph Bunche was the first African American to win this honor.",
+            ko: ["Ralph Bunche는", "이 영예를 얻은 최초의 아프리카계 미국인이었다."] }
+        ]
+      },
+      {
+        en_title: "Hibiscus mutabilis",
+        ko_title: "히비스커스 무타빌리스 (목부용)",
+        sentences: [
+          { en: "Hibiscus mutabilis, also known as the cotton rose, is a plant cultivated for its showy flowers.",
+            ko: ["목부용이라고도 알려진 히비스커스 무타빌리스는,", "화려한 꽃 때문에 재배되는 식물이다."] },
+          { en: "Originally native to southern China, it is now found in all continents except Antarctica.",
+            ko: ["원래 중국 남부가 원산지였으나,", "지금은 남극을 제외한 모든 대륙에서 발견된다."] },
+          { en: "The plant grows rapidly, and its flowers are 4-6 inch in diameter, blooming late summer right through autumn.",
+            ko: ["이 식물은 빠르게 자라며,", "꽃은 지름이 4~6인치이고,", "늦여름부터 가을 내내 핀다."] },
+          { en: "The species name mutabilis means 'change' in Latin, referring to the changing color of the flowers from white in the morning through light pink during noon to a deep rosy red colour all in one day.",
+            ko: ["종명 mutabilis는 라틴어로 '변화'를 뜻하며,", "하루 만에 아침의 흰색에서", "정오의 연한 분홍색을 거쳐", "짙은 장밋빛 붉은색으로 변하는 꽃의 색을 가리킨다."] },
+          { en: "Temperature is thought as an important factor affecting the rate of colour change, as white flowers kept in the refrigerator remain white until they are taken out to warm, whereupon they slowly turn pink.",
+            ko: ["온도는 색 변화 속도에 영향을 미치는", "중요한 요인으로 여겨지는데,", "냉장고에 보관된 흰 꽃은 따뜻한 곳으로 꺼내질 때까지 흰색을 유지하다가", "그 후 서서히 분홍색으로 변하기 때문이다."] },
+          { en: "This plant is best grown in well-drained soils and is quite drought tolerant.",
+            ko: ["이 식물은 배수가 잘 되는 토양에서 가장 잘 자라며,", "가뭄에 상당히 강하다."] }
+        ]
+      },
+      {
+        en_title: "The Life of Fanny Blankers-Koen",
+        ko_title: "Fanny Blankers-Koen의 삶",
+        sentences: [
+          { en: "Fanny Blankers-Koen, a Dutch mother of two, made history at the 1948 Olympics.",
+            ko: ["두 아이의 네덜란드인 어머니인 Fanny Blankers-Koen은,", "1948년 올림픽에서 역사를 만들었다."] },
+          { en: "She won four gold medals in track and field although she was not allowed to compete in more than three individual events.",
+            ko: ["그녀는 개인 종목에서 3개 이상 출전이 허용되지 않았음에도", "육상에서 금메달 4개를 땄다."] },
+          { en: "She held over 20 world records but had her career interrupted by World War II.",
+            ko: ["그녀는 20개가 넘는 세계 기록을 보유했지만", "제2차 세계대전으로 경력이 중단되었다."] },
+          { en: "After the war, she returned to competition, winning more titles and setting a world record in the pentathlon in 1951.",
+            ko: ["전쟁이 끝난 후,", "그녀는 경기에 복귀하여", "더 많은 타이틀을 획득했고", "1951년에는 5종 경기에서 세계 기록을 세웠다."] },
+          { en: "Her impressive achievements helped advance women's sports, and she defied conventional expectations about combining family life with an athletic career.",
+            ko: ["그녀의 인상적인 업적은 여성 스포츠의 발전을 도왔으며,", "그녀는 가정생활과 운동 경력을 병행하는 것에 대한", "통념에 도전했다."] },
+          { en: "In recognition of her remarkable career, she was named the woman athlete of the twentieth century by the IAAF in 1999.",
+            ko: ["그녀의 뛰어난 경력을 인정받아,", "그녀는 1999년 IAAF에 의해", "20세기 여성 선수로 선정되었다."] }
+        ]
+      },
+      {
+        en_title: "The Economic Impact of Introducing Carbon Tax",
+        ko_title: "탄소세 도입의 경제적 영향",
+        sentences: [
+          { en: "A 2016 report by the Heritage Foundation that analyzed a carbon tax in the United States at one-third the rate paid by Swedish industrial firms argued that the tax would have \"disastrous economic costs\".",
+            ko: ["스웨덴 산업체가 부담하는 세율의 3분의 1에 해당하는", "탄소세를 미국에 적용하는 것을 분석한", "2016년 Heritage Foundation의 보고서는", "그 세금이 '엄청난 경제적 비용'을 초래할 것이라고 주장했다."] },
+          { en: "Has Sweden been severely harmed by its carbon tax? Hardly.",
+            ko: ["스웨덴은 탄소세로 인해 심각한 피해를 입었는가?", "거의 그렇지 않다."] },
+          { en: "Prior to enacting the tax, Sweden's economy grew between 1961 and 1990 at an annual rate of 2.9 percent while the US economy grew at 3.7 percent.",
+            ko: ["세금을 제정하기 전,", "스웨덴 경제는 1961년에서 1990년 사이", "연평균 2.9% 성장한 반면,", "미국 경제는 3.7% 성장했다."] },
+          { en: "The gap between the Swedish and US growth rates fell after the tax was enacted.",
+            ko: ["세금이 제정된 후", "스웨덴과 미국의 성장률 격차는 줄어들었다."] },
+          { en: "Sweden's GDP grew between 1991 and 2015 at an average annual rate of 2.1 percent, just a bit lower than the US growth rate of 2.4 percent.",
+            ko: ["스웨덴의 GDP는 1991년에서 2015년 사이", "연평균 2.1% 성장했는데,", "이는 미국의 성장률 2.4%보다 약간 낮은 수치였다."] },
+          { en: "This is not to argue that Sweden closed the gap between its growth rate and the US growth rate because of its carbon tax.",
+            ko: ["이는 스웨덴이 탄소세 덕분에", "자국의 성장률과 미국 성장률 간의 격차를 좁혔다고", "주장하려는 것은 아니다."] },
+          { en: "But it is hard to argue that the country has suffered a great deal due to its carbon tax.",
+            ko: ["하지만 그 나라가 탄소세로 인해", "큰 피해를 입었다고 주장하기는 어렵다."] },
+          { en: "In fact, Sweden's growth rate has exceeded the US growth rate since 2000.",
+            ko: ["사실,", "스웨덴의 성장률은 2000년 이후", "미국의 성장률을 능가해 왔다."] }
+        ]
+      },
+      {
+        en_title: "Landscape Painter Albert Lorey Groll",
+        ko_title: "풍경화가 Albert Lorey Groll",
+        sentences: [
+          { en: "Born in New York City, Albert Lorey Groll was an etcher and also a landscape painter specializing in Western scenes.",
+            ko: ["뉴욕에서 태어난 Albert Lorey Groll은", "에칭 화가였으며", "서부 풍경을 전문으로 하는 풍경화가이기도 했다."] },
+          { en: "He was elected to the National Academy of Design in 1910.",
+            ko: ["그는 1910년", "국립 디자인 아카데미 회원으로 선출되었다."] },
+          { en: "He became a landscape painter, it is said, because he was then too poor to pay for models.",
+            ko: ["그는 당시 모델에게 돈을 지불하기에는", "너무 가난했기 때문에", "풍경화가가 되었다고 전해진다."] },
+          { en: "In 1899, he studied at the Royal Academy in Munich under N. Gysis and Loefftz as well as in London.",
+            ko: ["1899년,", "그는 뮌헨의 왕립 아카데미에서", "N. Gysis와 Loefftz 밑에서,", "그리고 런던에서도 공부했다."] },
+          { en: "He painted landscapes in the vicinity of New York until about 1904.",
+            ko: ["그는 1904년경까지", "뉴욕 인근의 풍경을 그렸다."] },
+          { en: "He then went West and sketched desert and mountain scenes in Arizona and New Mexico.",
+            ko: ["그 후 그는 서부로 가서", "애리조나와 뉴멕시코의", "사막과 산 풍경을 스케치했다."] },
+          { en: "The resulting painting \"Arizona\" won a gold medal at the Penn Academy of Fine Art (PAFA) in 1906.",
+            ko: ["그 결과물인 그림 \"Arizona\"는", "1906년 펜실베이니아 미술 아카데미(PAFA)에서", "금메달을 수상했다."] },
+          { en: "Groll was the rare painter in northern New Mexico before World War I, choosing \"bare mesas and towering cloud formations\" rather than mountains.",
+            ko: ["Groll은 제1차 세계대전 이전", "뉴멕시코 북부에서 활동한 드문 화가였으며,", "산보다는 '벌거벗은 메사와 우뚝 솟은 구름 형태'를 선택했다."] },
+          { en: "One of his paintings can be seen at the Octavia Fellin Public Library in Gallup.",
+            ko: ["그의 그림 중 하나는", "Gallup에 있는 Octavia Fellin 공립 도서관에서 볼 수 있다."] },
+          { en: "He died in New York City in 1952.",
+            ko: ["그는 1952년", "뉴욕시에서 사망했다."] }
+        ]
+      }
+    ]
+  },
+  u8: {
+    chapter: 3, label: "UNIT 08",
+    title: "어법 · 어휘",
+    desc: "밑줄 친 부분의 어법이나 어휘가 올바른지 판단하는 지문 4개",
+    passages: [
+      {
+        en_title: "The Impact of Proportional Representation on Small Parties",
+        ko_title: "비례 대표제가 군소정당에 미치는 영향",
+        sentences: [
+          { en: "Critics sometimes worry that by making it easier for small parties to win seats, proportional representation will encourage the growth of extremist groups standing on hateful or anti-democratic platforms.",
+            ko: ["비평가들은", "비례 대표제가 군소 정당이 의석을 확보하는 것을 쉽게 만듦으로써", "혐오 또는 반민주적 공약을 내세우는", "극단주의 단체의 성장을 부추길 것이라고", "때때로 우려한다."] },
+          { en: "Of course, no one committed to liberal and democratic values wants to see these kinds of parties taking seats in the legislature.",
+            ko: ["물론 자유주의와 민주적 가치에 전념하는 사람이라면", "누구도 이런 종류의 정당이", "주 의회에서 의석을 거머쥐는 것을", "보고 싶어 하지 않는다."] },
+          { en: "But it would be wrong to rig our political system to exclude them just because we disagree with their views.",
+            ko: ["하지만 우리가 단지", "그들의 견해에 동의하지 않는다고 해서", "그들을 배제하도록", "우리의 정치 시스템을 조작하는 것은 잘못된 일일 것이다."] },
+          { en: "Proportional voting systems provide a democratic vent for populist anger and discontent, creating clear incentives for mainstream parties to address underlying social problems and to win back votes.",
+            ko: ["비례 투표제는", "대중 영합주의적 분노와 불만에 대한", "민주적인 배출구를 제공하고,", "주류 정당이 근본적인 사회 문제를 처리하고", "표를 되찾을 확실한 동기를 창출한다."] },
+          { en: "We also have to remember that small parties can play a value role in highlighting specific issues that have been overlooked, as has often been the case with 'Green' parties.",
+            ko: ["또한 '녹색'당에서 보통 흔히 일어난 일인데,", "간과되어 온 특정 문제를 부각하는 데 있어", "군소 정당이 가치 있는 역할을 할 수 있다는 점", "또한 우리는 기억해야 한다."] },
+          { en: "In any case, the European experience suggests that there is no overall tendency for extremist parties to increase their numbers over time under proportional systems.",
+            ko: ["어쨌든 유럽의 경험이 시사하는 바에 따르면,", "비례제 아래에서 극단주의 정당이", "시간이 지남에 따라 의석수를 늘리는", "전반적인 경향은 존재하지 않는다."] }
+        ]
+      },
+      {
+        en_title: "Role-play and the Development of Expressive Abilities",
+        ko_title: "역할 놀이와 표현 능력의 발전",
+        sentences: [
+          { en: "Role-playing is an extension of representational skills.",
+            ko: ["역할 놀이는", "표현 능력의 확장이다."] },
+          { en: "Children role-play when they use not only materials and objects but also voice and actions to represent others during play.",
+            ko: ["아이들이 놀이 중에", "다른 사람을 표현하기 위해", "용구와 물건뿐만 아니라 목소리와 행동을 사용할 때", "역할 놀이를 하는 것이다."] },
+          { en: "Infants and toddlers begin to play a role when they imitate adults' language, dress, or actions.",
+            ko: ["영아와 유아는", "어른의 언어, 옷차림 또는 행동을 모방할 때", "역할 놀이를 시작한다."] },
+          { en: "An older child expands on this role by imitating familiar roles, such as a parent or doctor.",
+            ko: ["더 나이 든 아이는", "부모나 의사와 같은 친숙한 역할을 모방함으로써", "이 역할을 더 상세히 서술한다."] },
+          { en: "The child uses gestures and language to communicate his understanding of what this role represents.",
+            ko: ["아이는 몸짓과 언어를 사용하여", "이 역할이 무엇을 표현하는지에 대한", "자신의 이해를 전달한다."] },
+          { en: "He uses the doctor kit or kitchen playthings as props to support his actions while he plays.",
+            ko: ["아이는 놀이를 하는 동안", "자신의 행동을 뒷받침하기 위해", "의사 키트나 주방 장난감을 소품으로 사용한다."] },
+          { en: "For instance, he may use a cylinder-shaped block as a syringe when pretending to be a doctor.",
+            ko: ["예를 들어 아이는 의사인 척을 할 때,", "원통 모양의 블록을 주사기로 사용할 수도 있다."] },
+          { en: "As he becomes familiar with other people and their roles, he may imitate them with the actions and verbalizations of a grocer, waiter, or firefighter.",
+            ko: ["아이가 다른 사람과 그들의 역할에 익숙해지면서", "아이는 식료품점 직원, 웨이터, 혹은 소방관의", "행동과 발화와 함께", "그들을 모방할 수 있다."] },
+          { en: "Playing fantasy characters, such as a monster or a superhero, becomes common once a child is able to engage in more abstract thinking.",
+            ko: ["아이가 좀 더 추상적인 사고를 할 수 있게 되면", "괴물이나 슈퍼히어로와 같은", "판타지 캐릭터를 연기하는 것이", "흔해진다."] }
+        ]
+      },
+      {
+        en_title: "The Relationship between Language and Culture",
+        ko_title: "언어와 문화의 관계",
+        sentences: [
+          { en: "People are inherently social creatures, and in order to connect and regulate their social interactions, they must internalize their cultures.",
+            ko: ["인간은 본질적으로 사회적 동물이고,", "사회적 상호 작용을 연결하고 조절하기 위해,", "자신의 문화를 내면화해야 한다."] },
+          { en: "But cultures cannot be internalized without language.",
+            ko: ["그러나 문화는", "언어 없이 내면화될 수 없다."] },
+          { en: "Indeed, language is the vehicle through which we learn about our social world, discover its rules and values, and express our personal natures, allowing us to connect with others, both in relationships of exchange and of caring.",
+            ko: ["실제로, 언어는", "우리가 사회 세계에 대해 배우고,", "그 규칙과 가치관을 발견하며,", "우리 개인의 본성을 표현하는 수단인데,", "이는 교류와 배려의 관계 모두에서,", "우리가 다른 이들과 연결되게 해 준다."] },
+          { en: "Cultures themselves interact.",
+            ko: ["문화 자체는", "상호 작용한다."] },
+          { en: "As far back as the origins of human history, groups of individuals sharing a common culture and language made contact with other groups, each unified by their own shared tongue.",
+            ko: ["인류 역사의 기원으로까지 멀리 거슬러 올라가면,", "공통된 문화와 언어를 공유하는 사람들의 집단이", "다른 집단과 접촉했는데,", "그 집단 각각은 자신만의 공통 언어로 통합되어 있다."] },
+          { en: "Of great value was anyone who could ably facilitate those intergroup contacts — those people who were multilingual.",
+            ko: ["그러한 집단 사이의 접촉을", "능숙하게 원활히 진행할 수 있는 사람,", "즉 다국어를 구사하는 사람이", "큰 가치가 있었다."] },
+          { en: "Today we humans exist in a globally interconnected world.",
+            ko: ["오늘날 우리 인간은", "전 세계적으로 상호 연결된 세상에 존재한다."] },
+          { en: "We can transact with people from anywhere in seconds through the internet, or visit them through rapid means of travel, and in doing so experience a bit of their cultures.",
+            ko: ["우리는 인터넷을 통해 어디서든", "몇 초 안에 사람들과 교류하거나", "빠른 이동 수단을 통해 그들을 방문할 수 있고,", "그렇게 함으로써", "그들의 문화를 얼마간 경험할 수 있다."] }
+        ]
+      },
+      {
+        en_title: "Designing Art and Design Lessons for Discovery Learning",
+        ko_title: "발견 학습을 위한 미술·디자인 수업 구상",
+        sentences: [
+          { en: "To make art and design irresistible, the teacher must commit to providing opportunities that incite feelings of surprise and, thus, motivational discovery and learning.",
+            ko: ["미술과 디자인을 매우 매력적이게 만들기 위해", "교사는 놀라움의 감정과", "그에 따라 동기 부여가 되는", "발견과 학습을 불러일으키는", "기회를 제공하는 데 전념해야 한다."] },
+          { en: "This teaching approach is exciting — it allows the practitioner to consider what is tempting in learning, what drives an individual to find out and discover.",
+            ko: ["이러한 교육 접근 방식은 흥미진진한데,", "그것은 종사자(교사)가", "학습에서 무엇이 매력적인지,", "무엇이 개인으로 하여금 알아내고 발견하게 만드는지", "고려할 수 있게 해 준다."] },
+          { en: "The teacher needs to remember what it is about learning that makes it irresistible, and then design their lessons, their spaces of learning and their teaching materials accordingly.",
+            ko: ["교사는 학습에 대하여", "그것을 매우 매력적이게 만드는 것이 무엇인지 기억하고,", "그 다음 그에 맞게", "자신의 수업, 학습 공간, 수업 자료를 고안해야 한다."] },
+          { en: "This is not teaching that rigidly conforms to an instructional, target-bound paradigm.",
+            ko: ["이것은", "교육적이고 목표에 얽매인 패러다임을", "엄격하게 따르는 가르침이 아니다."] },
+          { en: "It is essential to provide classrooms that have no ceiling when creative minds are operating and finding out.",
+            ko: ["창의적인 사고가 작동하여 발견하고 있을 때", "한계가 없는 교실을 제공하는 것이", "필수적이다."] },
+          { en: "Classrooms of young children should be alive, dynamic and changeable, encouraged by a theme of the moment or an interest that pervades children's imaginations.",
+            ko: ["어린아이들의 교실은", "순간의 주제나", "아이들의 상상력에 고루 미치는 관심사에 의해 촉진되면서,", "살아 있고, 역동적이면서 변화할 수 있어야 한다."] }
+        ]
+      }
+    ]
+  },
+  m1: {
+    chapter: "2024년 9월 인천 학평(고1)", label: "18~22번",
+    title: "목적/심경/요지 파악",
+    desc: "편지, 이야기, 주장 지문 5개 (18~22번)",
+    passages: [
+      {
+        en_title: "Letter to Pittsburgh Train Station",
+        ko_title: "18번 · 매표소 재운영 요청 편지",
+        sentences: [
+          { en: "I am writing to express my deep concern about the recent change made by Pittsburgh Train Station.",
+            ko: ["저는 Pittsburgh Train Station에 의한", "최근의 변경에 대해", "저의 깊은 우려를 표하기 위해 글을 쓰고 있습니다."] },
+          { en: "The station had traditional ticket offices with staff before, but these have been replaced with ticket vending machines.",
+            ko: ["이전에는 역에 직원이 있는", "전통적인 매표소가 있었지만,", "이것들은 승차권 발매기로 대체되었습니다."] },
+          { en: "However, individuals who are unfamiliar with these machines are now experiencing difficulty accessing the railway services.",
+            ko: ["그러나 이러한 기계에 익숙하지 않은 사람들은", "현재 철도 서비스에 접근하는 데", "어려움을 겪고 있습니다."] },
+          { en: "Since these individuals heavily relied on the staff assistance to be able to travel, they are in great need of ticket offices with staff in the station.",
+            ko: ["이 사람들은 이동할 수 있기 위해", "직원의 도움에 크게 의존했기 때문에,", "그들은 역 내에 직원이 있는 매표소를", "매우 필요로 합니다."] },
+          { en: "Therefore, I am urging you to consider reopening the ticket offices.",
+            ko: ["그러므로 저는 당신에게", "매표소 재운영을 고려할 것을 촉구합니다."] },
+          { en: "With the staff back in their positions, many people would regain access to the railway services.",
+            ko: ["직원이 그들의 자리로 돌아오면", "많은 사람이 철도 서비스에 대한 접근을", "다시 얻을 것입니다."] },
+          { en: "I look forward to your prompt attention to this matter and a positive resolution.",
+            ko: ["저는 이 문제에 대한", "당신의 신속한 관심과 긍정적인 해결을 기대합니다."] }
+        ]
+      },
+      {
+        en_title: "Jeevan's CPR",
+        ko_title: "19번 · 무대 위 심폐소생술",
+        sentences: [
+          { en: "All the actors on the stage were focused on their acting.",
+            ko: ["무대 위의 모든 배우가", "그들의 연기에 집중하고 있었다."] },
+          { en: "Then, suddenly, Arthur fell into the corner of the stage.",
+            ko: ["그 때 갑자기", "Arthur가 무대의 한쪽 구석에 쓰러졌다."] },
+          { en: "Jeevan immediately approached Arthur and found his heart wasn't beating.",
+            ko: ["Jeevan이 즉각 Arthur에게 다가갔고", "그의 심장이 뛰지 않는 것을 알아차렸다."] },
+          { en: "Jeevan began CPR.",
+            ko: ["Jeevan은", "CPR을 시작했다."] },
+          { en: "Jeevan worked silently, glancing sometimes at Arthur's face.",
+            ko: ["Jeevan은 때때로 Arthur의 얼굴을 흘긋 보며", "조용히 작업했다."] },
+          { en: "He thought, \"Please, start breathing again, please.\"",
+            ko: ["그는 '제발, 다시 숨쉬기를 시작해요,", "제발.'이라고 생각했다."] },
+          { en: "Arthur's eyes were closed.",
+            ko: ["Arthur의 눈은", "감겨 있었다."] },
+          { en: "Moments later, an older man in a grey suit appeared, swiftly kneeling beside Arthur's chest.",
+            ko: ["잠시 뒤,", "회색 정장 차림의 한 노인이 나타났고,", "Arthur의 가슴 옆에 재빠르게 무릎을 꿇었다."] },
+          { en: "\"I'm Walter Jacobi. I'm a doctor.\" He announced with a calm voice.",
+            ko: ["\"저는 Walter Jacobi입니다.", "저는 의사입니다.\"", "그는 차분한 목소리로 전했다."] },
+          { en: "Jeevan wiped the sweat off his forehead.",
+            ko: ["Jeevan은 그의 이마에서", "땀을 닦아냈다."] },
+          { en: "With combined efforts, Jeevan and Dr. Jacobi successfully revived Arthur.",
+            ko: ["협력하여,", "Jeevan과 Dr. Jacobi는", "Arthur를 성공적으로 소생시켰다."] },
+          { en: "Arthur's eyes slowly opened.",
+            ko: ["Arthur의 눈이", "천천히 떠졌다."] },
+          { en: "Finally, Jeevan was able to hear Arthur's breath again, thinking to himself, \"Thank goodness. You're back.\"",
+            ko: ["마침내 Jeevan은 Arthur의 숨을 다시 들을 수 있었고,", "'다행이다.", "깨어났다.'라고 자신에게 되뇌었다."] }
+        ]
+      },
+      {
+        en_title: "The Gifted Child Parent Trap",
+        ko_title: "20번 · 영재 부모의 흔한 덫",
+        sentences: [
+          { en: "As the parent of a gifted child, you need to be aware of a certain common parent trap.",
+            ko: ["영재의 부모로서,", "당신은 어떤 흔한 부모의 덫을", "주의할 필요가 있다."] },
+          { en: "Of course you are a proud parent, and you should be.",
+            ko: ["물론, 당신은 자랑스러워하는 부모이고,", "그리고 그래야 한다."] },
+          { en: "While it is very easy to talk nonstop about your little genius and his or her remarkable behavior, this can be very stressful on your child.",
+            ko: ["당신의 작은 천재와", "그 또는 그녀의 놀라운 행동에 대해서", "쉬지 않고 말하는 것은 매우 쉬우나,", "이것은 당신의 아이에게 매우 스트레스가 될 수 있다."] },
+          { en: "It is extremely important to limit your bragging behavior to your very close friends, or your parents.",
+            ko: ["당신의 자랑하는 행동을", "당신의 아주 가까운 친구나, 당신의 부모에게로", "제한하는 것이 매우 중요하다."] },
+          { en: "Gifted children feel pressured when their parents show them off too much.",
+            ko: ["영재는", "그들의 부모가 지나치게 그들을 자랑할 때", "부담을 느낀다."] },
+          { en: "This behavior creates expectations that they may not be able to live up to, and also creates a false sense of self for your child.",
+            ko: ["이러한 행동은", "그들이 부응할 수 없을지도 모르는 기대를 만들고,", "또한 당신의 자녀에게 있어", "잘못된 자의식을 만든다."] },
+          { en: "You want your child to be who they are, not who they seem to be as defined by their incredible achievements.",
+            ko: ["당신은 당신의 자녀가", "그들의 엄청난 업적에 의해서 규정지어진 대로 보이는 누군가가 아니라", "있는 그대로의 그들이기를 바란다."] },
+          { en: "If not, you could end up with a driven perfectionist child or perhaps a drop-out, or worse.",
+            ko: ["그렇지 않으면,", "당신은 결국 지나친 완벽주의자 아이", "또는 아마도 학업 중단자이거나", "그보다 더 안 좋은 것을 마주하게 될 것이다."] }
+        ]
+      },
+      {
+        en_title: "Hanging Out with the Winners",
+        ko_title: "21번 · 자조 집단의 힘",
+        sentences: [
+          { en: "One valuable technique for getting out of helplessness, depression, and situations which are predominantly being run by the thought, \"I can't,\" is to choose to be with other persons who have resolved the problem with which we struggle.",
+            ko: ["무력함, 우울감, 그리고 '나는 할 수 없다'는 생각에 의해", "현저히 지배당하는 상황에서 벗어나기 위한", "한 가지 유용한 기술은", "우리가 분투하고 있는 문제를 해결해 본", "타인과 함께 있기로 선택하는 것이다."] },
+          { en: "This is one of the great powers of self-help groups.",
+            ko: ["이것은", "자조 집단의 큰 힘 중 하나이다."] },
+          { en: "When we are in a negative state, we have given a lot of energy to negative thought forms, and the positive thought forms are weak.",
+            ko: ["우리가 부정적인 상태에 있을 때,", "우리는 부정적인 사고 형태에 많은 에너지를 투입해 왔고", "긍정적인 사고 형태는 약하다."] },
+          { en: "Those who are in a higher vibration are free of the energy from their negative thoughts and have energized positive thought forms.",
+            ko: ["더 높은 진동에 있는 사람들은", "그들의 부정적인 사고에서 나오는 에너지가 없고,", "긍정적인 사고 형태를 활기 띠게 했다."] },
+          { en: "Merely to be in their presence is beneficial.",
+            ko: ["단지 그들이 있는 자리에 있기만 하는 것도", "유익하다."] },
+          { en: "In some self-help groups, this is called \"hanging out with the winners.\"",
+            ko: ["일부 자조 집단에서", "이것은 '승자들과 어울리기'라고 불린다."] },
+          { en: "The benefit here is on the psychic level of consciousness, and there is a transfer of positive energy and relighting of one's own latent positive thought forms.",
+            ko: ["여기에서의 이점은", "의식의 정신적 수준에 있으며,", "긍정적인 에너지의 전달과", "자신의 잠재적인 긍정적인 사고 형태의 재점화가 있다."] }
+        ]
+      },
+      {
+        en_title: "Emotions and Survival",
+        ko_title: "22번 · 감정의 진화적 기능",
+        sentences: [
+          { en: "Our emotions are thought to exist because they have contributed to our survival as a species.",
+            ko: ["우리의 감정은", "그것들이 종으로서 우리의 생존에 기여해 왔기 때문에", "존재한다고 여겨진다."] },
+          { en: "Fear has helped us avoid dangers, expressing anger helps us scare off threats, and expressing positive emotions helps us bond with others.",
+            ko: ["두려움은 우리가 위험을 피하는 데 도움을 주어 왔고,", "분노를 표현하는 것은 우리가 위협을 쫓아내도록 돕고,", "긍정적인 감정을 표현하는 것은", "우리가 다른 사람과 유대하도록 돕는다."] },
+          { en: "From an evolutionary perspective, an emotion is a kind of \"program\" that, when triggered, directs many of our activities (including attention, perception, memory, movement, expressions, etc.).",
+            ko: ["진화적 관점에서,", "감정은 유발될 때", "(주의, 지각, 기억, 움직임, 표현 등을 포함하는)", "우리의 많은 활동을 지시하는 일종의 '프로그램'이다."] },
+          { en: "For example, fear makes us very attentive, narrows our perceptual focus to threatening stimuli, will cause us either to face a situation (fight) or avoid it (flight), and may cause us to remember an experience more acutely (so that we avoid the threat in the future).",
+            ko: ["예를 들어, 두려움은 우리를 매우 주의 깊게 만들고,", "우리의 지각의 초점을 위협적인 자극으로 좁히고,", "우리로 하여금 상황을 정면으로 대하거나(싸우거나)", "그것을 피하도록(도피하도록) 하며,", "우리로 하여금 경험을 더 강렬하게 기억하도록", "(그래서 우리가 미래에 위협을 피하도록) 할 수도 있다."] },
+          { en: "Regardless of the specific ways in which they activate our systems, the specific emotions we possess are thought to exist because they have helped us (as a species) survive challenges within our environment long ago.",
+            ko: ["그것들이 우리의 시스템을 활성화하는", "구체적인 방식과는 관계없이,", "우리가 소유한 특정한 감정은", "그것들이 오래전에 우리의 환경 내에서", "우리가 (종으로서) 힘든 상황에서 생존하도록", "도움을 주어 왔기 때문에 존재한다고 여겨진다."] },
+          { en: "If they had not helped us adapt and survive, they would not have evolved with us.",
+            ko: ["만약 그것들이 우리가 적응하고", "생존하도록 도움을 주지 않았었더라면", "그것들은 우리와 함께 진화해 오지 않았을 것이다."] }
+        ]
+      }
+    ]
+  },
+  m2: {
+    chapter: "2024년 9월 인천 학평(고1)", label: "23~27번",
+    title: "정보/도표/인물 파악",
+    desc: "설명문, 도표, 인물, 안내문 지문 5개 (23~27번)",
+    passages: [
+      {
+        en_title: "AI and Workplace Inclusiveness",
+        ko_title: "23번 · AI와 일터 포괄성",
+        sentences: [
+          { en: "By improving accessibility of the workplace for workers that are typically at a disadvantage in the labour market, AI can improve inclusiveness in the workplace.",
+            ko: ["노동 시장에서 일반적으로 불리한 위치에 있는", "노동자를 위한 일터로의 접근성을 향상시킴으로써,", "AI는 일터에서 포괄성을 향상시킬 수 있다."] },
+          { en: "AI-powered assistive devices to aid workers with visual, speech or hearing difficulties are becoming more widespread, improving the access to, and the quality of work for people with disabilities.",
+            ko: ["시각, 발화 또는 청각 장애가 있는", "노동자들을 돕기 위한 AI 동력의 보조 장치들이", "더 널리 보급되어,", "장애를 지닌 사람들의", "업무 접근성과 업무의 질을 향상시키고 있다."] },
+          { en: "For example, speech recognition solutions for people with dysarthric voices, or live captioning systems for deaf and hard of hearing people can facilitate communication with colleagues and access to jobs where inter-personal communication is necessary.",
+            ko: ["예를 들어,", "구음 장애가 있는 사람들을 위한", "발화 인식 솔루션이나", "청각 장애인과 난청인을 위한 실시간 자막 시스템은", "동료와의 의사소통과", "대인 의사소통이 필요한 일에 대한 접근을 용이하게 할 수 있다."] },
+          { en: "AI can also enhance the capabilities of low-skilled workers, with potentially positive effects on their wages and career prospects.",
+            ko: ["AI는 또한", "그들의 임금과 경력 전망에 잠재적으로 긍정적인 영향과 함께", "저숙련 노동자들의 능력을 향상시킬 수 있다."] },
+          { en: "For example, AI's capacity to translate written and spoken word in real-time can improve the performance of non-native speakers in the workplace.",
+            ko: ["예를 들어,", "문자 언어와 음성 언어를 실시간으로 번역하는", "AI의 능력은", "일터에서 비원어민의 수행을 향상시킬 수 있다."] },
+          { en: "Moreover, recent developments in AI-powered text generators can instantly improve the performance of lower-skilled individuals in domains such as writing, coding or customer service.",
+            ko: ["게다가,", "최근의 AI 동력의 텍스트 생성기의 발전은", "글쓰기, 코딩, 고객 서비스와 같은 영역에서", "저숙련된 개인의 수행을 즉시 향상시킬 수 있다."] }
+        ]
+      },
+      {
+        en_title: "Whales as Carbon Engineers",
+        ko_title: "24번 · 탄소 저장고, 고래",
+        sentences: [
+          { en: "Whales are highly efficient at carbon storage.",
+            ko: ["고래는", "탄소 저장에 매우 효율적이다."] },
+          { en: "When they die, each whale sequesters an average of 30 tons of carbon dioxide, taking that carbon out of the atmosphere for centuries.",
+            ko: ["그들이 죽을 때,", "각각의 고래는 평균 30톤의 이산화 탄소를 격리하며,", "수 세기 동안 대기로부터", "그 탄소를 빼내어 둔다."] },
+          { en: "For comparison, the average tree absorbs only 48 pounds of CO2 a year.",
+            ko: ["비교하자면,", "평균적인 나무는", "연간 48파운드의 이산화 탄소만을 흡수한다."] },
+          { en: "From a climate perspective, each whale is the marine equivalent of thousands of trees.",
+            ko: ["기후의 관점에서", "각각의 고래는", "수천 그루의 나무에 상응하는 바다에 사는 것이다."] },
+          { en: "Whales also help sequester carbon by fertilizing the ocean as they release nutrient-rich waste, in turn increasing phytoplankton populations, which also sequester carbon — leading some scientists to call them the \"engineers of marine ecosystems.\"",
+            ko: ["고래는 또한 영양이 풍부한 배설물을 내보내면서", "바다를 비옥하게 함으로써", "탄소를 격리하는 데 도움을 주는데,", "결과적으로 식물성 플랑크톤 개체를 증가시키고", "이는 또한 탄소를 격리한다.", "그리하여 몇몇 과학자들은 그들을", "'해양 생태계의 기술자'라고 부르게 되었다."] },
+          { en: "In 2019, economists from the International Monetary Fund (IMF) estimated the value of the ecosystem services provided by each whale at over $2 million USD.",
+            ko: ["2019년 국제 통화 기금(IMF)의 경제학자들은", "각각의 고래에 의해서 제공되는", "생태계 서비스의 가치를", "미화 200만 달러가 넘게 추정했다."] },
+          { en: "They called for a new global program of economic incentives to return whale populations to preindustrial whaling levels as one example of a \"nature-based solution\" to climate change.",
+            ko: ["그들은 기후 변화에 대한", "'자연 기반 해결책'의 한 예로서", "고래 개체수를 산업화 이전의 고래잡이 수준으로 되돌리기 위한", "새로운 글로벌 경제적 인센티브 프로그램을 요구했다."] },
+          { en: "Calls are now being made for a global whale restoration program, to slow down climate change.",
+            ko: ["기후 변화를 늦추기 위해", "세계적인 고래 복원 프로그램에 대한 요구가", "현재 제기되고 있다."] }
+        ]
+      },
+      {
+        en_title: "Per Capita CO2 Emissions Graph",
+        ko_title: "25번 · 국가별 1인당 이산화 탄소 배출량 (도표)",
+        table: {
+          caption: "Per Capita CO2 Emissions from Three Major Sources in 2022 (단위: Tons)",
+          headers: ["Country", "Coal", "Oil", "Gas"],
+          rows: [
+            ["United States", "2.8", "6.7", "5.2"],
+            ["South Korea", "5.2", "3.4", "2.4"],
+            ["Germany", "2.9", "3.0", "1.8"],
+            ["South Africa", "5.7", "0.8", "0.2"],
+            ["Brazil", "0.3", "1.5", "0.3"]
+          ]
+        },
+        sentences: [
+          { en: "The above graph shows per capita CO2 emissions from coal, oil, and gas by countries in 2022.",
+            ko: ["위 그래프는", "2022년의 국가별 석탄, 석유, 천연가스에서 나온", "1인당 이산화 탄소 배출량을 보여 준다."] },
+          { en: "①The United States had the highest total per capita CO2 emissions, even though its emissions from coal were the second lowest among the five countries shown.",
+            ko: ["석탄에서 나온 배출량은", "보여진 다섯 개의 국가 중 두 번째로 낮았음에도 불구하고,", "미국은 가장 높은 1인당 이산화 탄소 총배출량을 가졌다."] },
+          { en: "②South Korea's total per capita CO2 emissions were over 10 tons, ranking it the second highest among the countries shown.",
+            ko: ["한국의 1인당 이산화 탄소 총배출량은", "10톤이 넘고,", "보여진 국가 중 두 번째로 높은 순위를 차지했다."] },
+          { en: "③Germany had lower CO2 emissions per capita than South Korea in all three major sources respectively.",
+            ko: ["독일은 한국보다", "각각의 모든 세 가지 주요한 원천에서", "더 낮은 1인당 이산화 탄소 배출량을 가졌다."] },
+          { en: "④The per capita CO2 emissions from coal in South Africa were over three times higher than (→ slightly less than twice) those in Germany.",
+            ko: ["남아프리카 공화국의 석탄으로부터의", "1인당 이산화 탄소 배출량은", "독일의 그것보다 세 배보다 더 높았다", "(→ 두 배보다 조금 낮았다)."],
+            strike: true, note: "도표 불일치 오답 문장" },
+          { en: "⑤In Brazil, oil was the largest source of CO2 emissions per capita among its three major sources, just as it was in the United States and Germany.",
+            ko: ["브라질에서 석유는", "브라질의 세 가지 주요한 원천 중에서", "1인당 이산화 탄소 배출량의 가장 큰 원천이었고,", "그것은 미국과 독일에서도 마찬가지였다."] }
+        ]
+      },
+      {
+        en_title: "Émilie du Châtelet",
+        ko_title: "26번 · 여성 과학자 Émilie du Châtelet",
+        sentences: [
+          { en: "Émilie du Châtelet, a French mathematician and physicist, was born in Paris in 1706.",
+            ko: ["프랑스 수학자이자 물리학자인", "Émilie du Châtelet는", "1706년에 파리에서 태어났다."] },
+          { en: "During her childhood, with her father's support, she was able to get mathematical and scientific education that most women of her time did not receive.",
+            ko: ["어린 시절에 아버지의 도움으로", "그녀는 당대 대부분의 여성들은 받지 못했던", "수학과 과학 교육을 받을 수 있었다."] },
+          { en: "In 1737, she submitted her paper on the nature of fire to a contest sponsored by the French Academy of Sciences, and it was published a year later.",
+            ko: ["1737년에 그녀는", "불의 속성에 관한 논문을", "French Academy of Sciences에 의해 후원되는 대회에 제출했으며,", "그것은 1년 후에 출간되었다."] },
+          { en: "In her book, Institutions de Physique, Émilie du Châtelet explained the ideas of space and time in a way that is closer to what we understand in modern relativity than what was common during her time.",
+            ko: ["그녀의 책 Institutions de Physique에서", "Émilie du Châtelet는", "당대에 일반적이었던 것보다", "현대의 상대성 이론에서 우리가 이해하는 것에 더 가까운 방식으로", "공간과 시간의 개념을 설명했다."] },
+          { en: "Her most significant achievement was translating Isaac Newton's Principia into French near the end of her life.",
+            ko: ["그녀의 가장 주요한 성과는", "그녀의 말년 무렵", "아이작 뉴턴의 Principia를 프랑스어로 번역한 것이었다."] },
+          { en: "Émilie du Châtelet's work was not recognized in her time, but she is now remembered as a symbol of the Enlightenment and the struggle for women's participation in science.",
+            ko: ["Émilie du Châtelet의 업적은", "당대에 인정받지 못했지만,", "현재 그녀는", "계몽주의와 여성의 과학 분야 참여를 위한", "투쟁의 상징으로 기억된다."] }
+        ]
+      },
+      {
+        en_title: "2024 Young Inventors Robot Competition",
+        ko_title: "27번 · 로봇 경진대회 안내문",
+        sentences: [
+          { en: "Join us for an exciting day of the Young Inventors Robot Competition!",
+            ko: ["Young Inventors Robot Competition의", "신나는 날에 우리와 함께하세요!"] },
+          { en: "Categories: Participants can compete in one of the following categories — Robot Design, Robot Coding, Robot Remote Control",
+            ko: ["분야: 참가자들은 다음 분야 중 하나에 참가할 수 있습니다.", "로봇 디자인, 로봇 코딩, 로봇 원격 조종"] },
+          { en: "Date and Time: September 28, 2024, 10 a.m. to 3 p.m.",
+            ko: ["날짜와 시간: 2024년 9월 28일,", "오전 10시부터 오후 3시까지"] },
+          { en: "Location: Computer Lab, Oakwood University",
+            ko: ["장소: Oakwood University", "컴퓨터실"] },
+          { en: "Registration: From August 1 to August 10, 2024 — Open to high school students — Online registration only (www.younginventors.edu)",
+            ko: ["등록: 2024년 8월 1일부터 8월 10일까지,", "고등학생이 등록 가능,", "온라인 등록만 가능(www.younginventors.edu)"] },
+          { en: "Awards: In each competition category, three participants will be honored — 1st place: $300, 2nd place: $200, 3rd place: $100",
+            ko: ["시상: 각 경쟁 분야에서 세 명의 참가자가 수상할 것입니다.", "1등: 300달러,", "2등: 200달러,", "3등: 100달러"] },
+          { en: "For more information, visit our website.",
+            ko: ["더 많은 정보를 원하시면,", "저희 웹사이트를 방문하세요."] }
+        ]
+      }
+    ]
+  },
+  m3: {
+    chapter: "2024년 9월 인천 학평(고1)", label: "28~32번",
+    title: "안내문/조직문화/도시/음악/매체",
+    desc: "안내문과 설명문 지문 5개 (28~32번)",
+    passages: [
+      {
+        en_title: "Saintville Art Week Stamp Tour",
+        ko_title: "28번 · 스탬프 투어 안내문",
+        sentences: [
+          { en: "The 8th annual Saintville Art Week Stamp Tour is back this year!",
+            ko: ["해마다 열리는 8번째", "Saintville Art Week Stamp Tour가", "올해도 돌아왔습니다!"] },
+          { en: "Anyone can participate in our event.",
+            ko: ["누구나", "우리의 행사에 참가할 수 있습니다."] },
+          { en: "Join us and enjoy exhibitions and new collections.",
+            ko: ["우리와 함께하여", "전시와 새로운 컬렉션을 즐겨 보세요."] },
+          { en: "When: The first week of October, 2024 / Where: Saintville Arts District",
+            ko: ["언제: 2024년 10월 첫째 주", "어디서: Saintville Arts District"] },
+          { en: "Step 1. Take a stamp tour map from the Saintville Arts Center.",
+            ko: ["1단계:", "Saintville Arts Center에서", "스탬프 투어 지도를 받으세요."] },
+          { en: "Step 2. Get stamps from at least 3 out of 5 spots and receive your gift.",
+            ko: ["2단계:", "다섯 곳 중 적어도 세 곳에서", "도장을 받고 선물을 받으세요."] },
+          { en: "You can choose either an umbrella or a mug with printed artwork on it for your gift.",
+            ko: ["예술 작품이 인쇄된", "우산이나 머그잔 중 하나를", "선물로 선택할 수 있습니다."] },
+          { en: "For more information, please visit our website at www.SaintvilleArtsCenter.com.",
+            ko: ["더 많은 정보를 원하시면,", "저희 웹사이트 www.SaintvilleArtsCenter.com을", "방문해 주세요."] }
+        ]
+      },
+      {
+        en_title: "Organizational Structure and Conflict",
+        ko_title: "29번 · 조직 구조와 갈등",
+        sentences: [
+          { en: "From an organizational viewpoint, one of the most fascinating examples of how any organization may contain many different types of culture is to recognize the functional operations of different departments within the organization.",
+            ko: ["조직의 관점에서,", "어떤 조직이 어떻게 많은 다른 문화 유형들을 포함할 수 있는지에 대한", "가장 매력적인 예시 중 하나는", "조직 내 다른 부서들의 기능적 운영을 인식하는 것이다."] },
+          { en: "The varying departments and divisions within an organization will inevitably view any given situation from their own biased and prejudiced perspective.",
+            ko: ["조직 내 다양한 부서와 과는", "필연적으로 어떤 주어진 상황이라도", "그들 자신만의 편향적이고 편파적인 관점에서 볼 것이다."] },
+          { en: "A department and its members will acquire \"tunnel vision\" which disallows them to see things as others see them.",
+            ko: ["한 부서와 그 구성원들은", "그들을 다른 이들이 그것들을 보는 대로", "볼 수 없게 하는", "'터널 시야 현상'을 갖게 될 것이다."] },
+          { en: "The very structure of organizations can create conflict.",
+            ko: ["조직의 구조 자체가", "갈등을 만들어낼 수 있다."] },
+          { en: "The choice of whether the structure is \"mechanistic\" or \"organic\" can have a profound influence on conflict management.",
+            ko: ["구조가 '기계적'인지 또는 '유기적'인지의 선택은", "갈등 관리에 깊은 영향을 미칠 수 있다."] },
+          { en: "A mechanistic structure has a vertical hierarchy with many rules, many procedures, and many levels of management involved in decision making.",
+            ko: ["기계적 구조는", "많은 규칙, 많은 절차", "그리고 의사결정에 포함된 많은 수준의 관리를 가진", "수직적 위계를 갖는다."] },
+          { en: "Organic structures are more horizontal in nature, where decision making is less centralized and spread across the plane of the organization.",
+            ko: ["유기적 구조는 본래 더 수평적이고,", "여기서는 의사결정이 덜 중앙 집중화되고,", "조직 전반에 걸쳐 펼쳐진다."] }
+        ]
+      },
+      {
+        en_title: "Removing Traffic, Not Just Calming It",
+        ko_title: "30번 · 교통 제거와 배달 차량",
+        sentences: [
+          { en: "An excellent alternative to calming traffic is removing it.",
+            ko: ["교통을 진정시키는 훌륭한 대안은", "그것을 제거하는 것이다."] },
+          { en: "Some cities reserve an extensive network of lanes and streets for bikes, pedestrians, and the occasional service vehicle.",
+            ko: ["몇몇 도시는", "자전거, 보행자, 그리고 수시 서비스 차량을 위한", "광범위한 망의 도로와 거리를 마련해 둔다."] },
+          { en: "This motivates people to travel by bike rather than by car, making streets safer for everyone.",
+            ko: ["이것은 사람들이 자동차보다 자전거로", "이동을 하도록 동기를 부여하여", "거리를 모두에게 더 안전하게 만든다."] },
+          { en: "As bicycles become more popular in a city, planners can convert more automobile lanes and entire streets to accommodate more of them.",
+            ko: ["자전거가 도시에서 더 대중적이 되면,", "계획자들은 더 많은 자동차 도로와 전체 거리를", "더 많은 자전거를 수용할 수 있도록 전환할 수 있다."] },
+          { en: "Nevertheless, even the most bikeable cities still require motor vehicle lanes for taxis, emergency vehicles, and delivery trucks.",
+            ko: ["그럼에도 불구하고,", "가장 자전거를 타기 좋은 도시들조차도", "여전히 택시, 긴급 차량, 그리고 배달 트럭을 위한", "자동차 도로를 필요로 한다."] },
+          { en: "Delivery vehicles are frequently a target of animus, but they are actually an essential component to making cities greener.",
+            ko: ["배달 차량은 자주", "반감의 대상이지만,", "그것들은 실제로", "도시를 더 친환경적으로 만드는 필수 구성요소이다."] },
+          { en: "A tightly packed delivery truck is a far more efficient transporter of goods than several hybrids carrying a few shopping bags each.",
+            ko: ["짐이 빽빽하게 들어찬 배달 트럭은", "각각 몇 개의 쇼핑백을 실은", "여러 하이브리드 차량보다", "훨씬 더 효율적인 상품 운송 수단이다."] },
+          { en: "Distributing food and other goods to neighborhood vendors allows them to operate smaller stores close to homes so that residents can walk, rather than drive, to get their groceries.",
+            ko: ["음식과 다른 상품을 동네 상인에게 배포하는 것은", "그들이 집에 가까운 더 작은 상점을 운영할 수 있게 하고", "그 결과 주민들은 식료품을 사기 위해", "운전하기보다는 걸어갈 수 있다."] }
+        ]
+      },
+      {
+        en_title: "Misunderstood Composers",
+        ko_title: "31번 · Salieri와 독창성",
+        sentences: [
+          { en: "You hear again and again that some of the greatest composers were misunderstood in their own day.",
+            ko: ["여러분은", "몇몇 가장 위대한 작곡가들이", "그들의 시대에 진가를 인정받지 못했다고", "몇 번이고 듣는다."] },
+          { en: "Not everyone could understand the compositions of Beethoven, Brahms, or Stravinsky in their day.",
+            ko: ["그들의 시대에", "베토벤, 브람스, 스트라빈스키의 곡들을", "모든 사람이 이해할 수 있었던 것은 아니었다."] },
+          { en: "The reason for this initial lack of acceptance is unfamiliarity.",
+            ko: ["이러한 초기의 수용 부족의 이유는", "낯섦이다."] },
+          { en: "The musical forms, or ideas expressed within them, were completely new.",
+            ko: ["음악적 형식, 또는", "그 안에 표현된 생각은", "완전히 새로운 것이었다."] },
+          { en: "And yet, this is exactly one of the things that makes them so great.",
+            ko: ["그럼에도 불구하고", "이것이 바로 그들을 그토록 위대하게 만드는", "것들 중 하나이다."] },
+          { en: "Effective composers have their own ideas.",
+            ko: ["유능한 작곡가는", "그들 자신만의 생각을 갖는다."] },
+          { en: "Have you ever seen the classic movie Amadeus?",
+            ko: ["당신은 고전 영화 Amadeus를", "본 적이 있는가?"] },
+          { en: "The composer Antonio Salieri is the \"host\" of this movie; he's depicted as one of the most famous non-great composers — he lived at the time of Mozart and was completely overshadowed by him.",
+            ko: ["작곡가 Antonio Salieri가", "이 영화의 '주인공'이다.", "그는 가장 유명한 위대하지 않은 작곡가 중 한 명으로 묘사된다.", "그는 모차르트 시대에 살았고", "그에 의해 완전히 가려졌다."] },
+          { en: "Now, Salieri wasn't a bad composer; in fact, he was a very good one.",
+            ko: ["이제 보니 Salieri는", "형편없는 작곡가가 아니었다.", "사실, 그는 매우 훌륭한 작곡가였다."] },
+          { en: "But he wasn't one of the world's great composers because his work wasn't original.",
+            ko: ["하지만 그의 작품이 독창적이지 않았기 때문에", "그는 세계의 위대한 작곡가들 중", "한 명은 아니었다."] },
+          { en: "What he wrote sounded just like what everyone else was composing at the time.",
+            ko: ["그가 쓴 곡은", "마치 그 당시 모든 다른 사람들이", "작곡했던 것처럼 들렸다."] }
+        ]
+      },
+      {
+        en_title: "New Media Goggles",
+        ko_title: "32번 · McLuhan의 매체 이론",
+        sentences: [
+          { en: "Every time a new medium comes along — whether it's the invention of the printed book, or TV, or SNS — and you start to use it, it's like you are putting on a new kind of goggles, with their own special colors and lenses.",
+            ko: ["인쇄된 책의 발명이든", "텔레비전의 발명이든", "SNS의 발명이든,", "새로운 매체가 나타나 여러분이 그것을 쓰기 시작할 때마다", "여러분은 고유의 색깔과 렌즈를 가진", "새 고글을 쓰는 것과 같다."] },
+          { en: "Each set of goggles you put on makes you see things differently.",
+            ko: ["여러분이 쓰는 각각의 고글은", "세상을 다른 방식으로 바라보게 한다."] },
+          { en: "So when you start to watch television, before you absorb the message of any particular TV show — whether it's Wheel of Fortune or The Wire — you start to see the world as being shaped like television itself.",
+            ko: ["그러므로 여러분이 텔레비전을 보기 시작하면,", "그것이 Wheel of Fortune이든 The Wire든,", "특정 텔레비전 프로그램의 메시지를 흡수하기 이전에", "여러분은 세상을 텔레비전 그 자체처럼", "형성된 것으로 바라보게 된다."] },
+          { en: "That's why Marshall McLuhan said that every time a new medium comes along — a new way for humans to communicate — it has buried in it a message.",
+            ko: ["이러한 이유로 Marshall McLuhan이", "새로운 매체, 즉,", "인간이 의사소통하는 새로운 방식이 나타날 때마다", "그 안에 메시지가 담겨 있다고 말한 것이다."] },
+          { en: "It is gently guiding us to see the world according to a new set of codes.",
+            ko: ["새로운 매체는 자연스럽게", "우리가 새로운 일련의 방식에 따라", "세상을 바라보게 한다."] },
+          { en: "The way information gets to you, McLuhan argued, is more important than the information itself.",
+            ko: ["McLuhan은", "정보가 여러분에게 도달하는 방식이", "정보 자체보다 더 중요하다고 주장했다."] },
+          { en: "TV teaches you that the world is fast; that it's about surfaces and appearances.",
+            ko: ["텔레비전은 우리에게", "세상은 빠르고,", "중요한 것은 표면과 겉모습이라고 가르친다."] }
+        ]
+      }
+    ]
+  },
+  m4: {
+    chapter: "2024년 9월 인천 학평(고1)", label: "33~37번",
+    title: "개념/명성/기억/모방/목소리",
+    desc: "심화 설명문 지문 5개 (33~37번)",
+    passages: [
+      {
+        en_title: "The Black Cat in a Dark Room",
+        ko_title: "33번 · 개념과 본질주의",
+        sentences: [
+          { en: "Concepts are vital to human survival, but we must also be careful with them because concepts open the door to essentialism.",
+            ko: ["개념은 인간의 생존에 필수적이지만,", "개념이 본질주의로 향하는 문을 열기 때문에", "우리는 또한 그것들을 주의해야 한다."] },
+          { en: "They encourage us to see things that aren't present.",
+            ko: ["그것들은 존재하지 않는 것들을", "보도록 우리를 부추긴다."] },
+          { en: "Stuart Firestein opens his book, Ignorance, with an old proverb, \"It is very difficult to find a black cat in a dark room, especially when there is no cat.\"",
+            ko: ["Stuart Firestein은", "'어두운 방에서 검은 고양이를 찾는 것은", "특히 고양이가 없을 때 매우 어렵다.'라는", "옛 속담으로 그의 책, Ignorance를 시작한다."] },
+          { en: "This statement beautifully sums up the search for essences.",
+            ko: ["이 말은", "본질에 대한 탐구를 훌륭하게 요약한다."] },
+          { en: "History has many examples of scientists who searched fruitlessly for an essence because they used the wrong concept to guide their hypotheses.",
+            ko: ["역사는", "가설을 이끄는 잘못된 개념을 사용했기 때문에", "헛되이 본질을 탐색했던 과학자들의", "많은 예를 가지고 있다."] },
+          { en: "Firestein gives the example of luminiferous ether, a mysterious substance that was thought to fill the universe so that light would have a medium to move through.",
+            ko: ["Firestein은", "빛이 통과할 수 있는 매개체를 갖도록", "우주를 가득 채워줄 것이라 여겨진", "신비한 물질인 발광 에테르의 예를 제시한다."] },
+          { en: "The ether was a black cat, writes Firestein, and physicists had been theorizing in a dark room, and then experimenting in it, looking for evidence of a cat that did not exist.",
+            ko: ["Firestein이 쓰기를,", "에테르는 검은 고양이였고,", "물리학자들은 어두운 방에서 이론을 세우고,", "그러고 나서 존재하지 않았던 고양이라는", "증거를 찾으며,", "그 안에서 실험을 하고 있었던 것이었다."] }
+        ]
+      },
+      {
+        en_title: "Ordinary Fame and Social Media Celebrity",
+        ko_title: "34번 · 소셜 미디어 유명인의 명성",
+        sentences: [
+          { en: "While social media attention is potentially an instrument to achieve ends like elite celebrity, some content creators desire ordinary fame as a social end in itself.",
+            ko: ["소셜 미디어 관심은", "잠재적으로 엘리트 명성과 같은 목적을 달성하기 위한 도구인 반면,", "일부 콘텐츠 제작자들은", "사회적 목적 그 자체로서 평범한 명성을 원한다."] },
+          { en: "Not unlike reality television stars, social media celebrities are often criticized for not having skills and talents associated with traditional, elite celebrity, such as acting or singing ability.",
+            ko: ["리얼리티 텔레비전 스타들과 다르지 않게,", "소셜 미디어 유명인들은", "연기나 가창력과 같은 전통적인 엘리트 명성과 관련된", "기술과 재능을 가지고 있지 않다는 이유로", "종종 비판을 받는다."] },
+          { en: "This criticism highlights the fact that digital content creators face real barriers to crossing over to the sphere of elite celebrity.",
+            ko: ["이러한 비판은", "디지털 콘텐츠 제작자들이 엘리트 명성의 영역으로 넘어가는 데 있어", "실질적인 장벽에 직면하고 있다는 사실을 강조한다."] },
+          { en: "However, the criticism also misses the point that the phenomenon of ordinary celebrity reconstructs the meaning of fame.",
+            ko: ["그러나 이 비판은 또한", "평범한 명성 현상이", "명성의 의미를 재구성한다는 점을 놓친다."] },
+          { en: "The elite celebrity is symbolized by the metaphor of the star, characterized by mystery and hierarchical distance and associated with naturalized qualities of talent and class.",
+            ko: ["엘리트 유명인은", "스타라는 은유로 상징되고,", "신비로움과 계층적 거리로 특징지어지며,", "타고난 자질의 재능과 계층에 연관되어 있다."] },
+          { en: "The ordinary celebrity attracts attention through regular and frequent interactions with other ordinary people.",
+            ko: ["평범한 유명인은", "다른 평범한 사람들과의", "정기적이고 빈번한 상호작용을 통해 관심을 끈다."] },
+          { en: "Achieving ordinary fame as a social media celebrity is like doing well at a game, because in this sphere, fame is nothing more nor less than relatively high scores on attention scales, the metrics of subscribers, followers, Likes, or clicks built into social media applications.",
+            ko: ["소셜 미디어 유명인으로서", "평범한 명성을 얻는 것은", "게임에서 잘하는 것과 같은데,", "왜냐하면 이 영역에서 명성은 관심 척도,", "즉, 소셜 미디어 애플리케이션에 내장된", "구독자, 팔로워, 좋아요 또는 클릭의 측정 기준에서", "상대적으로 높은 점수 그 이상도 그 이하도 아니기 때문이다."] }
+        ]
+      },
+      {
+        en_title: "Why Cramming Fails",
+        ko_title: "35번 · 벼락치기의 함정",
+        sentences: [
+          { en: "Why do we have the illusion that cramming for an exam is the best learning strategy?",
+            ko: ["왜 우리는 시험을 위해 벼락 공부를 하는 것이", "최고의 학습 전략이라는 착각을 하는 것일까?"] },
+          { en: "Because we are unable to differentiate between the various sections of our memory.",
+            ko: ["우리가 우리의 기억의", "다양한 구획을 구별할 수 없기 때문이다."] },
+          { en: "Immediately after reading our textbook or our class notes, information is fully present in our mind.",
+            ko: ["우리의 교과서나 수업 노트를 읽은 직후에는", "정보가 우리 머릿속에 완전히 존재한다."] },
+          { en: "It sits in our conscious working memory, in an active form.",
+            ko: ["그것은 우리의 의식적인 작업 기억에", "활동적인 형태로 자리한다."] },
+          { en: "We feel as if we know it, because it is present in our short-term storage space … but this short-term section has nothing to do with the long-term memory that we will need in order to recall the same information a few days later.",
+            ko: ["그것은 우리의 단기 저장 공간에 존재하기 때문에", "우리는 마치 우리가 그것을 알고 있는 것처럼 느끼지만,", "이 단기 구획은 며칠 후 같은 정보를 기억하기 위해", "우리가 필요로 할 장기 기억과는", "아무런 관련이 없다."] },
+          { en: "After a few seconds or minutes, working memory already starts disappearing, and after a few days, the effect becomes enormous: unless you retest your knowledge, memory vanishes.",
+            ko: ["몇 초 또는 몇 분 후,", "작업 기억은 이미 사라지기 시작하고,", "며칠 후 그 영향은 엄청나게 되어,", "여러분이 자신의 지식을 다시 테스트하지 않으면", "기억은 사라진다."] },
+          { en: "To get information into long-term memory, it is essential to study the material, then test yourself, rather than spend all your time studying.",
+            ko: ["정보를 장기 기억에 넣으려면,", "여러분의 모든 시간을 공부하는 데에 쓰기보다는", "자료를 공부하고 나서", "스스로를 테스트하는 것이 필수적이다."] }
+        ]
+      },
+      {
+        en_title: "Mirror Neurons and Learning by Observation",
+        ko_title: "36번 · 거울 뉴런과 모방 학습",
+        sentences: [
+          { en: "The discovery of mirror neurons has profoundly changed the way we think of a fundamental human capacity, learning by observation.",
+            ko: ["거울 뉴런의 발견은", "관찰에 의한 학습이라는", "근본적인 인간의 능력에 대해", "우리가 생각하는 방식을 완전히 바꾸어 놓았다."] },
+          { en: "As children we learn a lot by observing what our parents and friends do.",
+            ko: ["어린이일 때", "우리는 우리의 부모와 친구들이 하는 것을", "관찰하면서 많이 배운다."] },
+          { en: "Newborns, in the first week of life, have an inborn tendency to stick out their tongue if their parents stick out theirs.",
+            ko: ["갓난아기들은 생의 첫 주에", "그들의 부모가 그들의 것(혀)을 내밀면", "자신의 혀를 내미는 선천적인 성향을 갖고 있다."] },
+          { en: "Such imitation is not perfect.",
+            ko: ["그러한 모방은", "완벽하지 않다."] },
+          { en: "You may not see the tongue stick out each time you stick yours out at your newborn, but if you do it many times, the tongue will come out more often than if you do something different.",
+            ko: ["당신은 당신의 갓난아기에게 당신의 것(혀)을 내밀 때마다", "(아기의) 혀가 내밀어 나오는 것을", "보지 못할 수도 있지만,", "만약 당신이 그것을 여러 번 한다면", "당신이 다른 것을 할 때보다", "(아기의) 혀가 더 자주 나올 것이다."] },
+          { en: "Babies babble and later start to imitate the sounds their parents produce.",
+            ko: ["아기들은 옹알이하고", "이후에 그들의 부모가 내는 소리를", "모방하기 시작한다."] },
+          { en: "Later still, they play with vacuum cleaners and hammers in imitation of their parents.",
+            ko: ["이후에도 여전히,", "그들은 부모들을 흉내 내어", "진공청소기와 망치를 갖고 논다."] },
+          { en: "Our modern cultures, in which we write, speak, read, build spaceships and go to school, can work only because we are not restricted to the behavior we are born with or learn by trial and error.",
+            ko: ["쓰고 말하고 읽고", "우주선을 만들고 학교에 가는", "우리의 현대 문화는", "단지 우리가 가지고 태어나는", "또는 시행착오를 통해 배우는 행동에", "국한되지 않기 때문에 작동할 수 있다."] },
+          { en: "We can learn a lot by simply watching others.",
+            ko: ["우리는 그저 다른 사람들을 관찰하는 것을 통해", "많이 배울 수 있다."] }
+        ]
+      },
+      {
+        en_title: "Why Your Recorded Voice Sounds Strange",
+        ko_title: "37번 · 녹음된 내 목소리가 낯선 이유",
+        sentences: [
+          { en: "Have you ever been surprised to hear a recording of your own voice?",
+            ko: ["당신은 당신의 음성 녹음을 듣고", "놀랐던 적이 있는가?"] },
+          { en: "You might have thought, \"Is that really what my voice sounds like?\"",
+            ko: ["당신은 '내 목소리가", "정말 이렇게 들리는가?'라고", "생각했을지도 모른다."] },
+          { en: "Maybe your accent is more pronounced in the recording than you realized, or your voice is higher than it seems to your own ears.",
+            ko: ["어쩌면 녹음에서는", "당신이 인식한 것보다", "당신의 억양이 더 강조되거나,", "당신의 목소리가 당신의 귀에 들리는 것 같은 것보다", "더 높다."] },
+          { en: "This is of course quite a common experience.",
+            ko: ["이것은 당연히", "꽤 흔한 경험이다."] },
+          { en: "The explanation is actually fairly simple.",
+            ko: ["이 설명은", "사실 꽤 간단하다."] },
+          { en: "There are two pathways through which we perceive our own voice when we speak.",
+            ko: ["우리가 말할 때", "우리 자신의 목소리를 인지하는 데는", "두 가지 경로가 있다."] },
+          { en: "One is the route through which we perceive most external sounds, like waves that travel from the air through the outer, middle and inner ear.",
+            ko: ["하나는 외이, 중이, 내이를 통하는", "공기로부터 이동하는 파동처럼", "우리가 대부분의 외부의 소리를 인지하는 경로이다."] },
+          { en: "But because our vocal cords vibrate when we speak, there is a second internal path.",
+            ko: ["그러나 우리가 말할 때", "우리의 성대가 진동하기 때문에", "두 번째 내부의 경로가 있다."] },
+          { en: "Vibrations are conducted through our bones and stimulate our inner ears directly.",
+            ko: ["진동은 뼈를 통해 전해지고,", "우리의 내이를 직접 자극한다."] },
+          { en: "Lower frequencies are emphasized along this pathway.",
+            ko: ["낮은 주파수는", "이 경로를 따라 두드러진다."] },
+          { en: "That makes your voice sound deeper and richer to yourself than it may sound to other people.",
+            ko: ["그것은 당신의 목소리가", "다른 사람에게 들릴 수 있는 것보다", "당신 자신에게 더 깊고 풍부하게", "들리게 한다."] }
+        ]
+      }
+    ]
+  },
+  m5: {
+    chapter: "2024년 9월 인천 학평(고1)", label: "38~40번",
+    title: "생물/환경/실험 설명문",
+    desc: "상사·상동 형질, 해양 산소, 카푸친 원숭이 지문 3개 (38~40번)",
+    passages: [
+      {
+        en_title: "Analogous vs. Homologous Traits",
+        ko_title: "38번 · 상사 형질과 상동 형질",
+        sentences: [
+          { en: "Biologists distinguish two kinds of similarity.",
+            ko: ["생물학자들은", "두 종류의 유사성을 구별한다."] },
+          { en: "\"Analogous\" traits are ones that have a common function but arose on different branches of the evolutionary tree and are in an important sense not \"the same\" organ.",
+            ko: ["'상사' 형질은", "공통된 기능을 가지는 것들이지만,", "진화 계보의 다른 가지에서 생겨났고", "중요한 면에서 '동일한' 기관이 아닌 형질이다."] },
+          { en: "The wings of birds and the wings of bees are both used for flight and are similar in some ways because anything used for flight has to be built in those ways, but they arose independently in evolution and have nothing in common beyond their use in flight.",
+            ko: ["새의 날개들과 벌의 날개들은", "둘 다 비행에 쓰이고", "비행에 쓰이는 것은 어떤 것이든", "그러한 방식으로 만들어져야 하기 때문에", "일부 방식에서 유사하지만,", "그것들은 진화상에 별개로 생겨났고,", "비행에서 그것들의 쓰임 외에는 공통점이 없다."] },
+          { en: "\"Homologous\" traits, in contrast, may or may not have a common function, but they descended from a common ancestor and hence have some common structure that indicates their being \"the same\" organ.",
+            ko: ["대조적으로,", "'상동' 형질은", "공통된 기능이 있을 수도 없을 수도 있으나", "그것들은 공통의 조상으로부터 내려왔으므로", "그들이 '동일한' 기관임을 보여주는", "어떠한 공통된 구조를 가진다."] },
+          { en: "The wing of a bat and the front leg of a horse have very different functions, but they are all modifications of the forelimb of the ancestor of all mammals.",
+            ko: ["박쥐의 날개와 말의 앞다리는", "매우 다른 기능들을 가지나,", "그것들은 모든 포유류의", "조상의 앞다리가 모두 변형된 것들이다."] },
+          { en: "As a result, they share nonfunctional traits like the number of bones and the ways they are connected.",
+            ko: ["그 결과,", "그들은 뼈의 개수와", "그것들이 연결된 방식과 같은", "비기능적 형질을 공유한다."] },
+          { en: "To distinguish analogy from homology, biologists usually look at the overall architecture of the organs and focus on their most useless properties.",
+            ko: ["상사성과 상동성을 구별하기 위해,", "생물학자들은 주로", "그 기관의 전체적인 구성을 살펴보고", "그들의 가장 쓰임이 없는 특성에 집중한다."] }
+        ]
+      },
+      {
+        en_title: "Falling Ocean Oxygen Levels",
+        ko_title: "39번 · 감소하는 해양 용존 산소",
+        sentences: [
+          { en: "Seawater contains an abundance of dissolved oxygen that all marine animals breathe to stay alive.",
+            ko: ["해수는", "모든 해양 동물이 살아있기 위해 호흡하는", "다량의 용존 산소를 포함한다."] },
+          { en: "It has long been established in physics that cold water holds more dissolved oxygen than warm water does — this is one reason that cold polar seas are full of life while tropical oceans are blue, clear, and relatively poorly populated with living creatures.",
+            ko: ["따뜻한 물이 보유하고 있는 것보다", "차가운 물이 더 많은 용존 산소를 보유하고 있다는 사실은", "물리학에서 오랫동안 확립되어 왔으며,", "이는 열대 해양은 푸르고 맑고", "생물이 상대적으로 적게 서식하는 반면", "차가운 극지의 바다는 생명으로 가득한 하나의 이유이다."] },
+          { en: "Thus, as global warming raises the temperature of marine waters, it is self-evident that the amount of dissolved oxygen will decrease.",
+            ko: ["따라서 지구 온난화가", "해양 수온을 높임에 따라", "용존 산소의 양이 감소할 것은 자명하다."] },
+          { en: "This is a worrisome and potentially disastrous consequence if allowed to continue to an ecosystem-threatening level.",
+            ko: ["만약 생태계를 위협하는 수준까지", "계속되도록 허용된다면", "이는 걱정스럽고 잠재적으로 파괴적인 결과다."] },
+          { en: "Now scientists have analyzed data indicating that the amount of dissolved oxygen in the oceans has been declining for more than a half century.",
+            ko: ["현재 과학자들은", "해양에서 용존 산소의 양이", "반세기가 넘는 기간 동안 감소해 왔다는 것을", "보여 주는 데이터를 분석해 왔다."] },
+          { en: "The data show that the ocean oxygen level has been falling more rapidly than the corresponding rise in water temperature.",
+            ko: ["이 데이터는", "해양 산소 농도가", "상응하는 수온 상승보다", "더 빠르게 감소해 오고 있음을 보여 준다."] },
+          { en: "Falling oxygen levels in water have the potential to impact the habitat of marine organisms worldwide and in recent years this has led to more frequent anoxic events that killed or displaced populations of fish, crabs, and many other organisms.",
+            ko: ["감소하는 수중 산소 농도는", "세계적으로 해양 생물의 서식지에", "영향을 끼칠 가능성을 갖고 있으며", "최근에 이것은", "물고기, 게, 그리고 많은 다른 생물의 개체군을", "죽이거나 쫓아낸", "더 빈번한 산소 결핍 사건을 초래해 왔다."] }
+        ]
+      },
+      {
+        en_title: "Capuchin Monkeys and Fairness",
+        ko_title: "40번 · 카푸친 원숭이의 불공평 실험",
+        sentences: [
+          { en: "Capuchins — New World Monkeys that live in large social groups — will, in captivity, trade with people all day long, especially if food is involved.",
+            ko: ["대규모의 사회 집단으로 서식하는", "New World Monkey인 Capuchin은", "갇힌 상태에서 온종일 사람들과 거래를 할 것인데", "특히 먹이가 연관된다면 그러할 것이다."] },
+          { en: "I give you this rock and you give me a treat to eat.",
+            ko: ["'내가 너에게 이 돌을 주고", "너는 나에게 먹을 간식을 준다.'"] },
+          { en: "If you put two monkeys in cages next to each other, and offer them both slices of cucumber for the rocks they already have, they will happily eat the cucumbers.",
+            ko: ["만약 당신이 두 마리의 원숭이들을", "나란히 있는 우리에 넣고", "그들이 이미 가지고 있는 돌의 대가로", "오이 조각을 둘 모두에게 주었을 때", "그들은 그 오이를 기쁘게 먹을 것이다."] },
+          { en: "If, however, you give one monkey grapes instead — grapes being universally preferred to cucumbers — the monkey that is still receiving cucumbers will begin to throw them back at the experimenter.",
+            ko: ["하지만 만약 당신이", "한 원숭이에게는 포도를 대신 준다면,", "일반적으로 포도는 오이보다 더 선호되는데,", "여전히 오이를 받은 원숭이는", "그것들을 실험자에게 던지기 시작할 것이다."] },
+          { en: "Even though she is still getting \"paid\" the same amount for her effort of sourcing rocks, and so her particular situation has not changed, the comparison to another makes the situation unfair.",
+            ko: ["비록 그녀가 돌을 모은", "그녀의 수고에 대한 대가로", "같은 양을 여전히 '받고',", "그래서 그녀의 특정한 상황이 변화가 없더라도,", "다른 원숭이와의 비교는", "그 상황을 부당하게 만든다."] },
+          { en: "Furthermore, she is now willing to abandon all gains — the cucumbers themselves — to communicate her displeasure to the experimenter.",
+            ko: ["게다가,", "그녀는 실험자에게", "그녀의 불쾌함을 전달하기 위해", "모든 얻은 것들, 즉, 오이 자체를", "이제 기꺼이 포기한다."] },
+          { en: "[요약문] According to the passage, if the Capuchin monkey realizes the inequality in rewards compared to another monkey, she will reject her rewards to express her feelings about the treatment, despite getting exactly the same rewards as before.",
+            ko: ["이 글에 따르면,", "만약 Capuchin 원숭이가", "다른 원숭이와 비교하여", "보상에서의 불평등을 알아차린다면,", "그녀는 이전과 정확히 똑같은 보상을 받더라도", "대우에 대한 그녀의 감정을 표현하기 위해", "그녀의 보상을 거부할 것이다."],
+            note: "요약문" }
+        ]
+      }
+    ]
+  },
+  m6: {
+    chapter: "2024년 9월 인천 학평(고1)", label: "41~45번",
+    title: "고등교육 확대 / Sheikh Saadi 이야기",
+    desc: "장문 독해 지문 2개 (41~42번, 43~45번)",
+    passages: [
+      {
+        en_title: "The Expansion of Higher Education",
+        ko_title: "41~42번 · 고등교육의 대중화와 평가의 모순",
+        sentences: [
+          { en: "Higher education has grown from an elite to a mass system across the world.",
+            ko: ["고등 교육은", "전 세계에 걸쳐", "엘리트에서 대중 체제로 성장해 왔다."] },
+          { en: "In Europe and the USA, increased rates of participation occurred in the decades after the Second World War.",
+            ko: ["유럽과 미국에서는", "2차 세계 대전 이후 수십 년 동안", "증가된 참여율이 나타났다."] },
+          { en: "Between 2000 and 2014, rates of participation in higher education almost doubled from 19% to 34% across the world among the members of the population in the school-leaving age category (typically 18-23).",
+            ko: ["2000년과 2014년 사이에", "졸업 연령 범주(대체로 18세에서 23세) 내", "집단 구성원 사이에서의", "고등 교육 참여율은", "전 세계에 걸쳐 19%에서 34%로", "거의 두 배가 되었다."] },
+          { en: "The dramatic expansion of higher education has been marked by a wider range of institutions of higher learning and a more diverse demographic of students.",
+            ko: ["고등 교육의 극적인 확대는", "더 광범위한 고등 학습 기관과", "더 다양한 학생 인구 집단으로", "특징지어져 왔다."] },
+          { en: "Changes from an elite system to a mass higher education system are associated with political needs to build a specialised workforce for the economy.",
+            ko: ["엘리트 체제에서", "대중 고등 교육 체제로의 변화는", "경제를 위한 전문화된 노동력을 구축하려는", "정치적 필요성과 관련이 있다."] },
+          { en: "In theory, the expansion of higher education to develop a highly skilled workforce should diminish the role of examinations in the selection and control of students, initiating approaches to assessment which enable lifelong learning: assessment for learning and a focus on feedback for development.",
+            ko: ["이론적으로,", "고도로 숙련된 노동력을 개발하기 위한", "고등 교육의 확대는", "학생의 선발과 통제에 있어", "시험의 역할을 감소시켜야 하며,", "평생학습을 가능하게 하는 평가 방식을 도입해야 하는데,", "즉 학습을 '위한' 평가와", "발달을 위한 피드백에 대한 집중이다."] },
+          { en: "In reality, socio-political changes to expand higher education have set up a 'field of contradictions' for assessment in higher education.",
+            ko: ["실제로는", "고등 교육을 확대하기 위한", "사회 정치적 변화는", "고등 교육에서의 평가에 있어", "'모순의 장'을 조성해 왔다."] },
+          { en: "Mass higher education requires efficient approaches to assessment, such as examinations and multiple-choice quizzes, with minimalist, impersonal, or standardised feedback, often causing students to focus more on grades than feedback.",
+            ko: ["대중 고등 교육은", "최소한이거나 비개인적이거나 표준화된 피드백을 갖춘,", "시험과 선다형 퀴즈와 같은,", "평가로의 효율적인 접근 방법을 필요로 하며,", "이는 종종 학생이", "피드백보다 성적에 더 집중하게 만든다."] },
+          { en: "In contrast, the relatively small numbers of students in elite systems in the past allowed for closer relationships between students and their teachers, with formative feedback shaping the minds, academic skills, and even the characters of students.",
+            ko: ["대조적으로,", "과거에 엘리트 체제의", "상대적으로 적은 학생의 수는", "형성적 피드백이", "학생의 마음, 학업 기술,", "그리고 심지어 학생의 성격을 형성하면서,", "학생과 그들의 선생님 사이의", "더 긴밀한 관계를 허용했다."] }
+        ]
+      },
+      {
+        en_title: "The Poet Sheikh Saadi and the Wedding Feast",
+        ko_title: "43~45번 · 시인 Sheikh Saadi와 결혼식 잔치",
+        sentences: [
+          { en: "Once upon a time in the Iranian city of Shiraz, there lived the famous poet Sheikh Saadi.",
+            ko: ["옛날 옛적에", "이란의 도시 Shiraz에", "유명한 시인 Sheikh Saadi가 살았다."] },
+          { en: "Like most other poets and philosophers, he led a very simple life.",
+            ko: ["대부분의 다른 시인들과 철학자들처럼", "그는 매우 검소한 생활을 했다."] },
+          { en: "A rich merchant of Shiraz was preparing for his daughter's wedding and invited him along with a lot of big businessmen of the town.",
+            ko: ["Shiraz의 부유한 상인은", "그의 딸의 결혼식을 준비하고 있었고", "그를 그 마을의 많은 큰 사업가들과 함께 초대했다."] },
+          { en: "The poet accepted the invitation and decided to attend.",
+            ko: ["그 시인은 초대를 수락했고", "참석하기로 결정했다."] },
+          { en: "On the day of the wedding, the rich merchant, the host of the wedding, was receiving the guests at the gate.",
+            ko: ["결혼식 날,", "결혼식의 혼주인 부유한 상인은", "입구에서 손님을 맞이하고 있었다."] },
+          { en: "Many rich people of the town attended the wedding.",
+            ko: ["마을의 많은 부유한 사람들이", "결혼식에 참석했다."] },
+          { en: "They had come out in their best clothes.",
+            ko: ["그들은 자신의 가장 좋은 옷차림으로", "나왔다."] },
+          { en: "The poet wore simple clothes which were neither grand nor expensive.",
+            ko: ["시인은", "거창하지도 비싸지도 않은", "소박한 옷을 입었다."] },
+          { en: "He waited for someone to approach him but no one gave him as much as even a second glance.",
+            ko: ["그는 누군가가 자신에게 다가오기를 기다렸지만", "아무도 그에게 단 일 초의 눈길도 주지 않았다."] },
+          { en: "Even the host did not greet him and looked away.",
+            ko: ["혼주조차도 그에게 인사하지 않고", "눈길을 돌렸다."] },
+          { en: "Seeing all this, the poet quietly left the party and went to a shop where he could rent clothes.",
+            ko: ["이 모든 것을 보고", "시인은 조용히 파티를 떠나", "그가 옷을 빌릴 수 있는 가게로 갔다."] },
+          { en: "There he chose a richly decorated coat, which made him look like a new person.",
+            ko: ["그곳에서 그는", "화려하게 장식된 외투를 골랐고,", "그것은 그를 새로운 사람처럼 보이게 만들었다."] },
+          { en: "With this coat, he entered the party and this time was welcomed with open arms.",
+            ko: ["이 외투를 입고,", "그는 파티에 들어갔고", "이번에는 두 팔 벌려 환영을 받았다."] },
+          { en: "The host embraced him as he would do to an old friend and complimented him on the clothes he was wearing.",
+            ko: ["혼주는 그가 오랜 친구에게 하듯이", "그를 껴안았고,", "그가 입고 있는 옷에 대해", "그에게 칭찬했다."] },
+          { en: "The poet did not say a word and allowed the host to lead him to the dining room.",
+            ko: ["시인은 한 마디도 하지 않고", "혼주가 그를 식당으로", "안내하도록 허락했다."] },
+          { en: "The host personally led the poet to his seat and served out chicken soup to him.",
+            ko: ["혼주는 직접 시인을", "그의 자리로 안내했고", "그에게 닭고기 수프를 내주었다."] },
+          { en: "After a moment, the poet suddenly dipped the corner of his coat in the soup as if he fed it.",
+            ko: ["잠시 후에", "시인은 마치 음식을 먹이듯", "그의 외투 자락을 수프에 갑자기 담갔다."] },
+          { en: "All the guests were now staring at him in surprise.",
+            ko: ["모든 손님이 바로", "그를 놀라서 바라보고 있었다."] },
+          { en: "The host said, \"Sir, what are you doing?\"",
+            ko: ["혼주가 말했다.", "\"선생님, 뭐 하는 겁니까?\""] },
+          { en: "The poet very calmly replied, \"Now that I have put on expensive clothes, I see a world of difference here.",
+            ko: ["시인은 매우 침착하게 대답했다.", "\"내가 비싼 옷을 입으니,", "이곳에서 엄청난 차이를 봅니다."] },
+          { en: "All that I can say now is that this feast is meant for my clothes, not for me.\"",
+            ko: ["내가 지금 할 수 있는 모든 말은", "이 진수성찬이 내 옷을 위한 것이지,", "나를 위한 것이 아니라는 것뿐입니다.\""] }
+        ]
+      }
+    ]
+  },
+  c1: {
+    chapter: "공통영어2 (NE능률·민병천)", label: "Special Lesson 2",
+    title: "교과서 본문 · 다문화 정체성",
+    desc: "공통영어2 Special Lesson 2 교과서 본문 — 정체성의 형성과 다문화 정체성, 음식·기억·소속감",
+    passages: [
+      {
+        en_title: "Finding What Defines Us",
+        ko_title: "우리를 정의 내리는 것 찾기",
+        sentences: [
+          { en: "Our identity is our sense of who we are.",
+            ko: ["우리의 정체성은", "우리가 누구인가에 대한", "우리의 인식이다."] },
+          { en: "It defines us and our existence.",
+            ko: ["그것은", "우리와 우리의 존재를", "정의 내린다."] },
+          { en: "The formation of our identity begins from the moment we are born.",
+            ko: ["우리의 정체성 형성은", "우리가 태어난 순간부터", "시작한다."] },
+          { en: "However, it is developed further every time we interact socially.",
+            ko: ["그러나", "우리가 사회적으로 상호 작용할 때마다", "그것은 더욱 발전한다."] },
+          { en: "These interactions may take place with individuals — such as family members, friends, and teachers — or in formal or informal groups.",
+            ko: ["이러한 상호 작용은", "개인 — 가족 구성원, 친구, 그리고 선생님과 같은 —", "또는 공식적이거나 비공식적 집단 내에서", "일어날 수도 있다."] },
+          { en: "Cultural identity is a major component of our identity, as it teaches us about ourselves and gives us a sense of belonging.",
+            ko: ["문화적 정체성은", "우리 정체성의 주요한 구성 요소인데,", "그것이 우리에게 우리 자신에 대해 가르쳐 주고", "우리에게 소속감을 주기 때문이다."] },
+          { en: "Food can be important to our sense of cultural identity because many kinds of food are closely tied to particular cultures.",
+            ko: ["음식은", "문화적 정체성에 대한 우리의 감각에 중요할 수 있는데,", "많은 종류의 음식이 특정 문화와 긴밀히 연관되기 때문이다."] },
+          { en: "Some kinds of food are also often accompanied by specific cultural practices, such as using chopsticks.",
+            ko: ["몇몇 종류의 음식은", "또한 젓가락 사용과 같은", "특정 문화적 관행이 자주 수반된다."] },
+          { en: "Still, food can easily travel across cultures.",
+            ko: ["그럼에도,", "음식은 쉽게", "문화를 가로질러 이동할 수 있다."] },
+          { en: "And when it does, it can develop into something new.",
+            ko: ["그리고 그렇게 될 때,", "그것은 새로운 무언가로", "발전할 수 있다."] },
+          { en: "One example is Mexican food in America.",
+            ko: ["한 가지 예가", "미국의 멕시칸 음식이다."] },
+          { en: "It is a mixture of Mexican recipes and common American ingredients.",
+            ko: ["그것은", "멕시코 조리법과 흔한 미국 재료의", "혼합체이다."] },
+          { en: "Despite its adaptability, food is a stable source of cultural identity for people.",
+            ko: ["그것의 적응성에도 불구하고,", "음식은 사람들에게", "문화적 정체성의 안정적인 원천이다."] },
+          { en: "This is because food allows them to distinguish themselves from other cultural groups.",
+            ko: ["이것은 음식이 그들에게", "스스로를 다른 문화 집단과", "구분하게 해 주기 때문이다."] },
+          { en: "All aspects of food — including the way it is prepared, cooked, served, and consumed — are part of cultural identity.",
+            ko: ["음식의 모든 측면은,", "그것이 준비되고, 요리되며, 제공되고, 그리고 소비되는 방식을 포함해서,", "문화적 정체성의 일부이다."] },
+          { en: "A unique food-related word is sometimes an identifier of a certain culture.",
+            ko: ["음식과 관련된 독특한 단어는", "때때로", "특정 문화의 식별자(도구)이다."] },
+          { en: "Take Korea as an example.",
+            ko: ["한국을", "예로 들어 보자."] },
+          { en: "Korean culture is becoming increasingly popular around the world.",
+            ko: ["한국 문화는", "세계적으로", "점점 인기를 얻고 있다."] },
+          { en: "More and more people are trying Korean food and enjoying its healthy ingredients and unique flavors.",
+            ko: ["점점 더 많은 사람들이", "한국 음식을 먹어 보고", "그것의 건강한 재료와 독특한 맛을 즐기고 있다."] },
+          { en: "As a result, non-Koreans are becoming familiar with Korean words related to food.",
+            ko: ["결과적으로,", "한국인이 아닌 사람들이", "음식과 관련된 한국어 단어들에", "익숙해지고 있다."] },
+          { en: "Some of these terms have even been added to the Oxford English Dictionary.",
+            ko: ["이 용어들 중 일부는", "심지어", "옥스포드 영어 사전에 등재되기도 했다."] },
+          { en: "In fact, 9 of the 26 newly listed Korean words in the dictionary are related to food, including banchan, galbi, samgyeopsal, and mukbang.",
+            ko: ["사실,", "사전에 새롭게 등재된 한국어 단어 26개 중 9개가", "음식과 관련된 것으로,", "반찬, 갈비, 삼겹살, 그리고 먹방을 포함한다."] },
+          { en: "In the modern world, people from different cultural groups often mix with one another.",
+            ko: ["현대 세계에서는,", "다른 문화 집단에서 온 사람들이", "서로 자주 섞이게 된다."] },
+          { en: "Children whose parents are from two different cultural backgrounds have a multicultural identity.",
+            ko: ["부모가 두 개의 다른 문화적 배경 출신인", "아이들은", "다문화 정체성을 가진다."] },
+          { en: "A multicultural identity also forms when parents adopt children from a different culture.",
+            ko: ["다문화 정체성은", "부모가 다른 문화로부터 온 아이들을 입양할 때도", "형성된다."] },
+          { en: "These children may struggle to fit in with a certain cultural group.",
+            ko: ["이 아이들은", "특정한 문화 집단과 어울리기 위해", "애쓸지도 모른다."] },
+          { en: "Similarly, immigrants who try to adapt to a new culture may experience the same confusion.",
+            ko: ["비슷하게,", "새로운 문화에 적응하려고 노력하는", "이민자들도", "같은 혼란을 경험할지도 모른다."] },
+          { en: "You might be able to understand the meaning of cultural confusion by reading the following passage written by a Korean American writer.",
+            ko: ["여러분은", "한국계 미국인 작가에 의해 쓰인", "다음 구절을 읽음으로써", "문화적 혼란의 의미를 이해할 수 있을 것이다."] },
+          { en: "Since the day my mother died, I haven't been able to enter an Asian grocery store without crying.",
+            ko: ["엄마가 돌아가신 날부터,", "나는 아시아 식품점에", "울지 않고 들어갈 수가 없었다."] },
+          { en: "The shop is like a little piece of Korea.",
+            ko: ["그 가게는", "한국의 작은 조각과도 같았다."] },
+          { en: "Everywhere I look, I see familiar labels on items such as my favorite ramyeon or the tteok for making tteokguk, which Koreans eat on New Year's Day.",
+            ko: ["내가 보는 곳마다,", "나는 내가 좋아하는 라면이나", "한국 사람들이 새해 첫날에 먹는", "떡국을 만들기 위한 떡과 같은 제품들에서", "익숙한 라벨들이 보인다."] },
+          { en: "The dumpling skins in the freezers bring back memories of my mother.",
+            ko: ["냉동고에 있는 만두피는", "나의 어머니에 대한", "추억을 되살리게 한다."] },
+          { en: "I remember when my mother and I used to fill the skins with ingredients.",
+            ko: ["나는", "나의 어머니와 내가", "재료(속)로 (만두)피를 채우곤 했던 때를", "기억한다."] },
+          { en: "The sight of the banchan refrigerators reminds me of the taste of my mother's lovingly made side dishes.",
+            ko: ["반찬 냉장고를 보는 것은", "나에게", "나의 어머니가 정성스럽게 만든", "반찬들의 맛을 떠오르게 한다."] },
+          { en: "With my mother gone, I ask myself,",
+            ko: ["나의 어머니가 돌아가시고,", "나는 자신에게 묻는다."] },
+          { en: "\"Am I still Korean? How can I be Korean if I have no one to ask which kind of rice we used to buy anymore?\"",
+            ko: ["\"내가 여전히 한국 사람인가?", "우리가 어떤 종류의 쌀을 사곤 했는지", "물어볼 사람이 더 이상 없다면", "내가 어떻게 한국 사람일 수 있지?\""],
+            note: "Michelle Zauner, 『H마트에서 울다』 발췌" },
+          { en: "Like the woman in this story, people with a multicultural identity sometimes have problems defining themselves.",
+            ko: ["이 이야기 속 여자처럼,", "다문화 정체성을 가진 사람들은", "때때로 그들 스스로를 정의 내리는 데", "어려움을 겪는다."] },
+          { en: "However, there are some advantages to having a multicultural identity.",
+            ko: ["그러나,", "다문화 정체성을 가지는 것에는", "몇몇 장점이 있다."] },
+          { en: "People with a multicultural identity naturally gain the ability to recognize cultural differences.",
+            ko: ["다문화 정체성을 가진 사람들은", "문화적 차이들을 인식하는 능력을", "자연적으로 얻는다."] },
+          { en: "They can fill the gap between cultures and easily adapt to cross-cultural situations.",
+            ko: ["그들은", "문화 사이 틈을 메꿀 수 있고", "여러 문화가 섞인 상황에", "쉽게 적응할 수 있다."] },
+          { en: "For example, a Korean American may feel attached to their Korean cultural identity when playing yunnori on Chuseok, a Korean holiday similar to Thanksgiving.",
+            ko: ["예를 들어,", "한국계 미국인은", "추수 감사절과 비슷한 한국의 명절인 추석에", "윷놀이를 할 때", "그들의 한국적인 문화적 정체성에", "애착을 느낄지도 모른다."] },
+          { en: "However, they will feel attached to their American cultural identity when they watch a parade on Thanksgiving Day.",
+            ko: ["그러나,", "그들이 추수 감사절에 행진을 볼 때는", "그들의 미국적 문화적 정체성에", "애착을 느끼게 될 것이다."] },
+          { en: "Our cultural identity helps us to understand ourselves and our place in the world.",
+            ko: ["우리의 문화적 정체성은", "우리가 우리 스스로와", "세계에서 우리의 위치를", "이해하도록 도와준다."] },
+          { en: "Food can be a powerful connection to our cultural identity because it involves cultural traditions that get passed down from one person to another.",
+            ko: ["음식은", "한 사람에게서 다른 사람으로 전수되는", "문화적 전통을 수반(포함)하기 때문에", "우리의 문화적 정체성에", "강력한 연결 고리가 되어 줄 수 있다."] },
+          { en: "People with a multicultural identity, for example, may feel that their favorite dishes help them define who they are.",
+            ko: ["예를 들어", "다문화 정체성을 가진 사람들은", "그들이 좋아하는 요리들이", "그들이 누구인지 정의 내리도록 도와준다고", "느낄지도 모른다."] },
+          { en: "In this way, food can be a way to maintain a link to the cultures that they come from.",
+            ko: ["이런 방식으로,", "음식은", "그들의 출신 문화와의 관계(연결)를", "유지하는 방법이 될 수 있다."] }
+        ]
+      }
+    ]
+  }
+};
+
+const unitKeys = Object.keys(DATA);
+let currentUnit = unitKeys[0];
+let currentPassageIdx = 0;
+
+function renderRail(){
+  const tabWrap = document.getElementById('unitTabs');
+  tabWrap.innerHTML = '';
+  let lastChapter = null;
+  unitKeys.forEach((key) => {
+    const unit = DATA[key];
+    if (unit.chapter !== lastChapter){
+      const label = document.createElement('div');
+      label.className = 'chapter-label';
+      label.textContent = typeof unit.chapter === 'number' ? `Chapter ${unit.chapter}` : unit.chapter;
+      tabWrap.appendChild(label);
+      lastChapter = unit.chapter;
+    }
+    const numMatch = unit.label.match(/\d+/);
+    const num = numMatch ? numMatch[0] : '';
+    const btn = document.createElement('button');
+    btn.className = 'unit-tab' + (key === currentUnit ? ' active' : '');
+    btn.innerHTML = `<span class="num">${num}</span>${unit.label}`;
+    btn.onclick = () => { currentUnit = key; currentPassageIdx = 0; renderAll(); };
+    tabWrap.appendChild(btn);
+  });
+
+  const unit = DATA[currentUnit];
+  let total = 0;
+  unit.passages.forEach(p => { total += p.sentences.filter(s => !s.skip).length; });
+  document.getElementById('progressBox').innerHTML =
+    `이 유닛 지문 ${unit.passages.length}개<br>총 문장 ${total}개`;
+}
+
+function renderHeader(){
+  const unit = DATA[currentUnit];
+  document.getElementById('unitEyebrow').textContent = typeof unit.chapter === 'number'
+    ? `CHAPTER ${unit.chapter} · ${unit.label}`
+    : `${unit.chapter} · ${unit.label}`;
+  document.getElementById('unitTitle').textContent = unit.title;
+  document.getElementById('unitDesc').textContent = unit.desc;
+}
+
+function renderChips(){
+  const wrap = document.getElementById('passageChips');
+  wrap.innerHTML = '';
+  DATA[currentUnit].passages.forEach((p, i) => {
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (i === currentPassageIdx ? ' active' : '');
+    chip.textContent = `${i+1}. ${p.ko_title}`;
+    chip.onclick = () => { currentPassageIdx = i; renderPassage(); renderChips(); };
+    wrap.appendChild(chip);
+  });
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderTable(table){
+  if (!table) return '';
+  const headHtml = table.headers.map(h => `<th>${escapeHtml(h)}</th>`).join('');
+  const rowsHtml = table.rows.map(r => `<tr>${r.map(c => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`).join('');
+  return `
+    <div class="table-caption">${escapeHtml(table.caption)}</div>
+    <div class="table-wrap">
+      <table class="ref-table">
+        <thead><tr>${headHtml}</tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ---- AI 실시간 문제 생성 (sample 캐퍼빌리티) ----
+const QUIZ_TYPES = [
+  { id: "order",       label: "문장 순서 맞추기" },
+  { id: "oddword",     label: "어색한 단어 고르기" },
+  { id: "wordchoice",  label: "알맞은 단어 고르기" },
+  { id: "irrelevant",  label: "흐름과 맞지 않는 문장" },
+  { id: "insertion",   label: "문장 넣기" }
+];
+
+const QUIZ_TYPE_RULES = {
+  order: `[문제 유형] 문장 순서 배열하기
+지문에서 자연스럽게 이어지는 문장 3~4개를 골라 (A), (B), (C) 순서를 임의로 섞어 제시하고, "주어진 글 다음에 이어질 순서로 가장 적절한 것은?" 유형의 5지선다 문제를 만드세요.
+displayText에는 기준이 되는 첫 문장과, 순서가 섞인 (A)(B)(C) 문단을 줄바꿈으로 구분해 넣으세요.
+options에는 "①(B)-(A)-(C)"처럼 서로 다른 순서 조합 5개를 넣으세요 (원문과 다른 영어 단어를 새로 만들지 말고, 지문의 문장을 그대로 사용하세요).`,
+  oddword: `[문제 유형] 문맥상 어색한 단어 고르기
+지문 속 문장 하나를 그대로 골라, 그 안에 있는 서로 다른 단어 5개에 ①~⑤ 번호를 매겨 표시하세요. 그중 정확히 하나의 단어만 반의어 등 문맥에 맞지 않는 단어로 바꾸고 나머지 4개는 원문 그대로 두세요.
+displayText에는 번호가 매겨진 문장 전체를 넣으세요 (예: The market is ①essentially random ②... ③...).
+options에는 표시한 5개 단어를 "①random", "②..." 형식으로 그대로 넣으세요.`,
+  wordchoice: `[문제 유형] 문맥에 맞는 낱말 고르기
+지문 속 문장에서 2~3곳을 골라 (A), (B), (C)로 표시하고, 각 자리에 문맥상 적절한 원래 단어와 부적절한 단어를 슬래시(/)로 나란히 제시하세요. 예: increase / decrease
+displayText에는 이렇게 (A)(B)(C) 선택지가 표시된 문장(들)을 넣으세요.
+options에는 "① increase … simple … science" 처럼 (A)(B)(C)에 들어갈 단어의 조합 5개를 넣으세요.`,
+  irrelevant: `[문제 유형] 전체 흐름과 관계없는 문장 고르기
+지문의 문장들 앞에 순서대로 ①~⑤ 번호를 매기세요 (문장이 5개보다 적으면 자연스러운 문장 1개를 새로 만들어 중간에 끼워 넣어 5개를 채우세요). 그중 정확히 하나는 전체 글의 흐름과 어울리지 않는 문장(주제에서 벗어나거나 논리적으로 튀는 문장)으로 만드세요.
+displayText에는 번호가 매겨진 지문 전체를 넣으세요.
+options에는 "①","②","③","④","⑤"를 그대로 넣으세요.`,
+  insertion: `[문제 유형] 주어진 문장 넣기
+지문에서 문장 하나를 골라 빼낸 뒤 "주어진 문장"으로 제시하고, 나머지 지문 문장들 사이 5곳에 ①~⑤ 번호를 매겨 표시하세요.
+displayText 맨 앞줄에 "[주어진 문장] ..." 형태로 빼낸 문장을 넣고, 그 아래 줄바꿈 후 번호가 매겨진 나머지 지문을 넣으세요.
+options에는 "①","②","③","④","⑤"를 그대로 넣으세요.`
+};
+
+function buildQuizPrompt(typeId, passageText){
+  const rule = QUIZ_TYPE_RULES[typeId];
+  return `당신은 한국 고등학교 영어 내신·수능 대비 문제를 출제하는 전문 교사입니다. 아래 영어 지문만을 근거로 문제를 하나 만들어 주세요. 지문에 없는 사실을 지어내지 마세요.
+
+[지문]
+${passageText}
+
+${rule}
+
+반드시 아래 JSON 형식으로만 답하세요. 다른 설명 문장, 코드블록 표시는 절대 포함하지 마세요.
+{"instruction": "문제 지시문 한 문장(한국어)", "displayText": "지문/보기를 보여줄 텍스트(줄바꿈은 \\n 사용)", "options": ["①...", "②...", "③...", "④...", "⑤..."], "correctIndex": 0부터 시작하는 정답 인덱스 정수, "explanation": "정답과 나머지 오답 이유에 대한 한국어 해설"}`;
+}
+
+let samplePromise = null;
+function getSample(){
+  if (!samplePromise){
+    samplePromise = (typeof claude !== "undefined" && claude.use)
+      ? claude.use("sample").catch(() => null)
+      : Promise.resolve(null);
+  }
+  return samplePromise;
+}
+
+function renderQuiz(data, box){
+  const options = Array.isArray(data.options) ? data.options : [];
+  const correct = Number(data.correctIndex);
+  const optsHtml = options.map((opt, i) => `<button class="quiz-option" data-idx="${i}">${escapeHtml(String(opt))}</button>`).join('');
+  box.innerHTML = `
+    <div class="quiz-instruction">${escapeHtml(data.instruction || '')}</div>
+    <div class="quiz-passage">${escapeHtml(data.displayText || '')}</div>
+    <div class="quiz-options">${optsHtml}</div>
+    <div class="quiz-explanation" id="quizExplanation" style="display:none;"></div>
+  `;
+  box.querySelectorAll('.quiz-option').forEach(optBtn => {
+    optBtn.addEventListener('click', () => {
+      const idx = Number(optBtn.dataset.idx);
+      box.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+      if (idx === correct){
+        optBtn.classList.add('correct');
+      } else {
+        optBtn.classList.add('wrong');
+        const correctBtn = box.querySelector(`.quiz-option[data-idx="${correct}"]`);
+        if (correctBtn) correctBtn.classList.add('correct');
+      }
+      const exp = document.getElementById('quizExplanation');
+      exp.style.display = 'block';
+      exp.innerHTML = `<strong>해설</strong> ${escapeHtml(data.explanation || '')}`;
+    });
+  });
+}
+
+async function generateQuiz(typeId, passage, view){
+  const box = view.querySelector('#quizResult');
+  const typeBtns = view.querySelectorAll('.quiz-type-btn');
+  typeBtns.forEach(b => b.disabled = true);
+  box.innerHTML = `<div class="quiz-loading">AI가 문제를 만들고 있어요...</div>`;
+  try {
+    const sample = await getSample();
+    if (!sample){
+      box.innerHTML = `<div class="quiz-empty">이 화면에서는 AI 문제 생성 기능을 사용할 수 없습니다.</div>`;
+      return;
+    }
+    const passageText = passage.sentences.filter(s => !s.skip).map(s => s.en).join(' ');
+    const prompt = buildQuizPrompt(typeId, passageText);
+    const data = await sample.json(prompt, { modelTier: "default", cache: false });
+    if (!data || !Array.isArray(data.options) || data.options.length === 0){
+      box.innerHTML = `<div class="quiz-empty">문제 형식이 올바르지 않습니다. 다시 시도해 주세요.</div>`;
+      return;
+    }
+    renderQuiz(data, box);
+  } catch (e) {
+    const code = (e && e.code) ? e.code : "error";
+    box.innerHTML = `<div class="quiz-empty">문제를 만들지 못했습니다 (${escapeHtml(code)}). 버튼을 다시 눌러 시도해 주세요.</div>`;
+  } finally {
+    typeBtns.forEach(b => b.disabled = false);
+  }
+}
+
+function renderPassage(){
+  const p = DATA[currentUnit].passages[currentPassageIdx];
+  const view = document.getElementById('passageView');
+
+  const visibleSentences = p.sentences.filter(s => !s.skip);
+
+  const sentencesHtml = visibleSentences.map((s, sIdx) => {
+    const phrasesHtml = s.ko.map((phrase, pIdx) => `
+      <span class="phrase" data-s="${sIdx}" data-p="${pIdx}">
+        <span class="ko-text">${escapeHtml(phrase)}</span>
+        <span class="cover"></span>
+      </span>
+    `).join('');
+    const noteHtml = s.note ? `<span class="note-tag">${escapeHtml(s.note)}</span>` : '';
+    return `
+      <div class="sentence" data-idx="${sIdx}">
+        <div class="sentence-index">${String(sIdx+1).padStart(2,'0')}</div>
+        <div class="en${s.strike ? ' strike' : ''}">${s.en}${noteHtml}</div>
+        <div class="ko-row">${phrasesHtml}</div>
+      </div>
+    `;
+  }).join('');
+
+  const flowHtml = (p.flow && p.flow.length)
+    ? `<ol>${p.flow.map(f => `<li>${escapeHtml(f)}</li>`).join('')}</ol>`
+    : `<div class="flow-empty">이 지문의 흐름 요약은 아직 준비되지 않았습니다.</div>`;
+
+  view.innerHTML = `
+    <div class="passage-title">
+      <h2>${p.en_title}</h2>
+      <span class="kor">${p.ko_title}</span>
+    </div>
+    ${renderTable(p.table)}
+    <div class="passage-toolbar">
+      <button class="toolbar-btn flow-btn" id="flowBtn">🔎 흐름 보기</button>
+      <div class="toolbar-right">
+        <button class="toolbar-btn" id="revealAllBtn">전체 구절 보기</button>
+        <button class="toolbar-btn" id="hideAllBtn">전체 가리기</button>
+      </div>
+    </div>
+    <div class="flow-box" id="flowBox">${flowHtml}</div>
+    <div class="sentence-list">${sentencesHtml}</div>
+    <div class="footnote"><span class="hint">가림막</span>을 구절 단위로 하나씩 눌러보며 스스로 해석해보고, 확인하고 싶은 부분만 열어보세요.</div>
+    <div class="quiz-section">
+      <div class="quiz-header">🧩 AI 문제 만들기</div>
+      <div class="quiz-types">
+        ${QUIZ_TYPES.map(t => `<button class="quiz-type-btn" data-type="${t.id}">${t.label}</button>`).join('')}
+      </div>
+      <div class="quiz-result" id="quizResult"></div>
+    </div>
+  `;
+
+  view.querySelectorAll('.phrase').forEach(el => {
+    const cover = el.querySelector('.cover');
+    const text = el.querySelector('.ko-text');
+    cover.addEventListener('click', () => el.classList.add('revealed'));
+    text.addEventListener('click', () => el.classList.remove('revealed'));
+  });
+  document.getElementById('revealAllBtn').onclick = () => {
+    view.querySelectorAll('.phrase').forEach(el => el.classList.add('revealed'));
+  };
+  document.getElementById('hideAllBtn').onclick = () => {
+    view.querySelectorAll('.phrase').forEach(el => el.classList.remove('revealed'));
+  };
+  document.getElementById('flowBtn').onclick = () => {
+    const box = document.getElementById('flowBox');
+    const btn = document.getElementById('flowBtn');
+    box.classList.toggle('show');
+    btn.textContent = box.classList.contains('show') ? '🔎 흐름 숨기기' : '🔎 흐름 보기';
+  };
+  view.querySelectorAll('.quiz-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => generateQuiz(btn.dataset.type, p, view));
+  });
+}
+
+function renderAll(){
+  renderRail();
+  renderHeader();
+  renderChips();
+  renderPassage();
+}
+
+renderAll();
+</script>
+</body>
+</html>
